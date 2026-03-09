@@ -71,6 +71,8 @@ public class MemberAuthService {
         final Member member = memberRepository.getReferenceById(memberId);
 
         member.delete();
+
+        addBlacklistedAccessToken(request.accessToken());
         removeRefreshTokenFromRedis(request.refreshToken());
     }
 
@@ -99,5 +101,13 @@ public class MemberAuthService {
         }
 
         return Long.valueOf(memberId);
+    }
+
+    private void addBlacklistedAccessToken(final String accessToken) {
+        redisTemplate.opsForValue().set(
+            JwtService.JWT_BLACKLIST_KEY + accessToken,
+            "1",
+            Duration.ofSeconds(jwtProperties.accessTokenExpiration())
+        );
     }
 }

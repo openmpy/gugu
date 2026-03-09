@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -19,9 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
+    public static final String JWT_BLACKLIST_KEY = "blacklist:access_token:";
     public static final String MEMBER_ID = "id";
 
     private final JwtProperties jwtProperties;
+    private final StringRedisTemplate redisTemplate;
 
     public String generateAccessToken(final Long memberId) {
         final Claims jwtClaims = Jwts.claims();
@@ -67,6 +70,10 @@ public class JwtService {
     public Long extractMemberId(final String accessToken) {
         final Map<String, Object> payload = getPayload(accessToken);
         return Long.valueOf(payload.get(MEMBER_ID).toString());
+    }
+
+    public boolean isBlacklisted(final String accessToken) {
+        return redisTemplate.hasKey(JWT_BLACKLIST_KEY + accessToken);
     }
 
     private Map<String, Long> createClaims(final Long memberId) {
