@@ -35,4 +35,17 @@ public class MemberLocation {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public static MemberLocation create(final Member member, final Point location) {
+        return MemberLocation.builder()
+            .member(member)
+            .location(location)
+            .updatedAt(LocalDateTime.now())
+            .build();
+    }
+
+    public void updateLocation(final Point location) {
+        this.location = location;
+        this.updatedAt = LocalDateTime.now();
+    }
 }
