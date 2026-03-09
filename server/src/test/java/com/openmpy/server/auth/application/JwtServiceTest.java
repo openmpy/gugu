@@ -35,4 +35,17 @@ class JwtServiceTest {
         assertThat(refreshToken).isNotNull();
         System.out.println("refreshToken = " + refreshToken);
     }
+
+    @DisplayName("Access Token에서 회원 ID 값을 추출한다.")
+    @Test
+    void jwt_service_test_03() {
+        // given
+        final String accessToken = jwtService.generateAccessToken(1L);
+
+        // when
+        final Long memberId = jwtService.extractMemberId(accessToken);
+
+        // then
+        assertThat(memberId).isEqualTo(1L);
+    }
 }
