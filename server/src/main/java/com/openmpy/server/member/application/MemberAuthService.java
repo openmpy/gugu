@@ -57,6 +57,7 @@ public class MemberAuthService {
     public MemberRotateTokenResponse rotateToken(final MemberRotateTokenRequest request) {
         final Long memberId = getMemberIdFromRefreshToken(request.refreshToken());
 
+        addBlacklistedAccessToken(request.accessToken());
         removeRefreshTokenFromRedis(request.refreshToken());
 
         final String accessToken = jwtService.generateAccessToken(memberId);
