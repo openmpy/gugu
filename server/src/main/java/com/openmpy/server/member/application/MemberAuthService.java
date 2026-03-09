@@ -106,7 +106,7 @@ public class MemberAuthService {
 
     private void addBlacklistedAccessToken(final String accessToken) {
         redisTemplate.opsForValue().set(
-            JwtService.JWT_BLACKLIST_KEY + accessToken,
+            JwtService.BLACKLIST_ACCESS_TOKEN_KEY + accessToken,
             "1",
             Duration.ofSeconds(jwtProperties.accessTokenExpiration())
         );

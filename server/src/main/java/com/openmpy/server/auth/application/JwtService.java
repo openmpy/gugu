@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-    public static final String JWT_BLACKLIST_KEY = "blacklist:access_token:";
-    public static final String MEMBER_ID = "id";
+    public static final String BLACKLIST_ACCESS_TOKEN_KEY = "blacklist:access_token:";
+    private static final String MEMBER_ID = "id";
 
     private final JwtProperties jwtProperties;
     private final StringRedisTemplate redisTemplate;
@@ -73,7 +73,7 @@ public class JwtService {
     }
 
     public boolean isBlacklisted(final String accessToken) {
-        return redisTemplate.hasKey(JWT_BLACKLIST_KEY + accessToken);
+        return redisTemplate.hasKey(BLACKLIST_ACCESS_TOKEN_KEY + accessToken);
     }
 
     private Map<String, Long> createClaims(final Long memberId) {
