@@ -83,7 +83,7 @@ public class MemberAuthService {
 
         final Member member = getMember(memberId);
 
-        member.activate(request.nickname(), request.birthYear(), request.gender());
+        member.activate(request.nickname(), request.birthYear(), request.gender(), request.bio());
     }
 
     @Transactional

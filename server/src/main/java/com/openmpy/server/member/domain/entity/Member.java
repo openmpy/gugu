@@ -50,6 +50,9 @@ public class Member {
     @Column(name = "gender")
     private MemberGender gender;
 
+    @Column(name = "bio", columnDefinition = "TEXT")
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private MemberStatus status;
@@ -74,12 +77,14 @@ public class Member {
     public void activate(
         final String nickname,
         final Integer birthYear,
-        final MemberGender gender
+        final MemberGender gender,
+        final String bio
     ) {
         this.nickname = new MemberNickname(nickname);
         this.birthYear = new MemberBirthYear(birthYear);
         this.gender = gender;
         this.status = MemberStatus.ACTIVE;
+        this.bio = bio;
         this.updatedAt = LocalDateTime.now();
     }
 

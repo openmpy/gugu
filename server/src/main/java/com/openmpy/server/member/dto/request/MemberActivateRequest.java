@@ -5,7 +5,8 @@ import com.openmpy.server.member.domain.constants.MemberGender;
 public record MemberActivateRequest(
     String nickname,
     Integer birthYear,
-    MemberGender gender
+    MemberGender gender,
+    String bio
 ) {
 
 }
