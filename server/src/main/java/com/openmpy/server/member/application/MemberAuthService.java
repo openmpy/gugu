@@ -5,7 +5,9 @@ import com.openmpy.server.global.properties.JwtProperties;
 import com.openmpy.server.member.domain.constants.MemberGender;
 import com.openmpy.server.member.domain.entity.Member;
 import com.openmpy.server.member.dto.request.MemberDeleteRequest;
+import com.openmpy.server.member.dto.request.MemberRotateTokenRequest;
 import com.openmpy.server.member.dto.request.MemberSignupRequest;
+import com.openmpy.server.member.dto.response.MemberRotateTokenResponse;
 import com.openmpy.server.member.dto.response.MemberSignupResponse;
 import com.openmpy.server.member.repository.MemberRepository;
 import java.time.Duration;
@@ -52,6 +54,19 @@ public class MemberAuthService {
     }
 
     @Transactional
+    public MemberRotateTokenResponse rotateToken(final MemberRotateTokenRequest request) {
+        final Long memberId = getMemberIdFromRefreshToken(request.refreshToken());
+
+        removeRefreshTokenFromRedis(request.refreshToken());
+
+        final String accessToken = jwtService.generateAccessToken(memberId);
+        final String refreshToken = jwtService.generateRefreshToken();
+
+        saveRefreshTokenToRedis(refreshToken, memberId);
+        return new MemberRotateTokenResponse(accessToken, refreshToken);
+    }
+
+    @Transactional
     public void delete(final Long memberId, final MemberDeleteRequest request) {
         final Member member = memberRepository.getReferenceById(memberId);
 
@@ -73,5 +88,16 @@ public class MemberAuthService {
         final String key = REFRESH_TOKEN_KEY + refreshToken;
 
         redisTemplate.delete(key);
+    }
+
+    private Long getMemberIdFromRefreshToken(final String refreshToken) {
+        final String key = REFRESH_TOKEN_KEY + refreshToken;
+        final String memberId = redisTemplate.opsForValue().get(key);
+
+        if (memberId == null) {
+            throw new IllegalArgumentException("회원 ID 값을 찾을 수 없습니다.");
+        }
+
+        return Long.valueOf(memberId);
     }
 }
