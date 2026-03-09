@@ -2,15 +2,17 @@ package com.openmpy.server.member.application;
 
 import com.openmpy.server.auth.application.JwtService;
 import com.openmpy.server.global.properties.JwtProperties;
-import com.openmpy.server.member.domain.constants.MemberGender;
 import com.openmpy.server.member.domain.entity.Member;
+import com.openmpy.server.member.dto.request.MemberActivateRequest;
 import com.openmpy.server.member.dto.request.MemberDeleteRequest;
 import com.openmpy.server.member.dto.request.MemberRotateTokenRequest;
-import com.openmpy.server.member.dto.request.MemberSignupRequest;
+import com.openmpy.server.member.dto.request.MemberSendCodeRequest;
+import com.openmpy.server.member.dto.request.MemberVerifyCodeRequest;
 import com.openmpy.server.member.dto.response.MemberRotateTokenResponse;
-import com.openmpy.server.member.dto.response.MemberSignupResponse;
+import com.openmpy.server.member.dto.response.MemberVerifyCodeResponse;
 import com.openmpy.server.member.repository.MemberRepository;
 import java.time.Duration;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MemberAuthService {
 
+    public static final String PHONE_KEY = "auth:phone:";
     public static final String REFRESH_TOKEN_KEY = "auth:refresh_token:";
+    public static final int CODE_EXPIRE_MINUTES = 3;
 
     private final MemberRepository memberRepository;
     private final StringRedisTemplate redisTemplate;
@@ -28,21 +32,35 @@ public class MemberAuthService {
     private final JwtProperties jwtProperties;
     private final JwtService jwtService;
 
-    @Transactional
-    public MemberSignupResponse signup(final MemberSignupRequest request) {
+    @Transactional(readOnly = true)
+    public void sendCode(final MemberSendCodeRequest request) {
         if (memberRepository.existsByPhone_Value(request.phone())) {
             throw new IllegalArgumentException("이미 가입된 휴대폰 번호입니다.");
         }
-        if (memberRepository.existsByNickname_Value(request.nickname())) {
-            throw new IllegalArgumentException("이미 가입된 닉네임입니다.");
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(PHONE_KEY + request.phone()))) {
+            throw new IllegalArgumentException("인증 번호가 이미 전송되었습니다.");
         }
 
-        final Member member = Member.create(
-            request.phone(),
-            request.nickname(),
-            request.birthYear(),
-            MemberGender.valueOf(request.gender())
-        );
+        final String key = PHONE_KEY + request.phone();
+        final String code = generateCode();
+
+        redisTemplate.opsForValue().set(key, code, Duration.ofMinutes(CODE_EXPIRE_MINUTES));
+        System.out.println("code = " + code); // SMS API 호출
+    }
+
+    @Transactional
+    public MemberVerifyCodeResponse verifyCode(final MemberVerifyCodeRequest request) {
+        final String key = PHONE_KEY + request.phone();
+        final String savedCode = redisTemplate.opsForValue().get(key);
+
+        if (savedCode == null) {
+            throw new IllegalArgumentException("인증 번호가 존재하지 않습니다.");
+        }
+        if (!savedCode.equals(request.code())) {
+            throw new IllegalArgumentException("인증 번호가 일치하지 않습니다.");
+        }
+
+        final Member member = Member.create(request.phone());
 
         memberRepository.save(member);
 
@@ -50,7 +68,16 @@ public class MemberAuthService {
         final String refreshToken = jwtService.generateRefreshToken();
 
         saveRefreshTokenToRedis(refreshToken, member.getId());
-        return new MemberSignupResponse(accessToken, refreshToken);
+        redisTemplate.delete(key);
+
+        return new MemberVerifyCodeResponse(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public void activate(final Long memberId, final MemberActivateRequest request) {
+        final Member member = getMember(memberId);
+
+        member.activate(request.nickname(), request.birthYear(), request.gender());
     }
 
     @Transactional
@@ -69,12 +96,19 @@ public class MemberAuthService {
 
     @Transactional
     public void delete(final Long memberId, final MemberDeleteRequest request) {
-        final Member member = memberRepository.getReferenceById(memberId);
+        final Member member = getMember(memberId);
 
         member.delete();
-
         addBlacklistedAccessToken(request.accessToken());
         removeRefreshTokenFromRedis(request.refreshToken());
+    }
+
+    private Member getMember(final Long memberId) {
+        return memberRepository.getReferenceById(memberId);
+    }
+
+    private String generateCode() {
+        return String.format("%06d", ThreadLocalRandom.current().nextInt(1_000_000));
     }
 
     private void saveRefreshTokenToRedis(final String refreshToken, final Long memberId) {

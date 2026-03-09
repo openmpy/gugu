@@ -1,6 +1,6 @@
 package com.openmpy.server.member.dto.response;
 
-public record MemberSignupResponse(
+public record MemberVerifyCodeResponse(
     String accessToken,
     String refreshToken
 ) {

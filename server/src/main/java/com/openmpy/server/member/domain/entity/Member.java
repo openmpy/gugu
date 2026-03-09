@@ -26,7 +26,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("status = 'ACTIVE'")
+@SQLRestriction("status IN ('PENDING', 'ACTIVE')")
 @Entity
 public class Member {
 
@@ -39,15 +39,15 @@ public class Member {
     private MemberPhone phone;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "nickname", nullable = false, unique = true))
+    @AttributeOverride(name = "value", column = @Column(name = "nickname", unique = true))
     private MemberNickname nickname;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "birth_year", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "birth_year"))
     private MemberBirthYear birthYear;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private MemberGender gender;
 
     @Enumerated(EnumType.STRING)
@@ -63,20 +63,24 @@ public class Member {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public static Member create(
-        final String phone,
+    public static Member create(final String phone) {
+        return Member.builder()
+            .phone(new MemberPhone(phone))
+            .status(MemberStatus.PENDING)
+            .createdAt(LocalDateTime.now())
+            .build();
+    }
+
+    public void activate(
         final String nickname,
         final Integer birthYear,
         final MemberGender gender
     ) {
-        return Member.builder()
-            .phone(new MemberPhone(phone))
-            .nickname(new MemberNickname(nickname))
-            .birthYear(new MemberBirthYear(birthYear))
-            .gender(gender)
-            .status(MemberStatus.ACTIVE)
-            .createdAt(LocalDateTime.now())
-            .build();
+        this.nickname = new MemberNickname(nickname);
+        this.birthYear = new MemberBirthYear(birthYear);
+        this.gender = gender;
+        this.status = MemberStatus.ACTIVE;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void update(
