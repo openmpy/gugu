@@ -1,5 +1,7 @@
 package com.openmpy.server.member.application;
 
+import static com.openmpy.server.auth.application.JwtService.BLACKLIST_ACCESS_TOKEN_KEY;
+
 import com.openmpy.server.auth.application.JwtService;
 import com.openmpy.server.global.properties.JwtProperties;
 import com.openmpy.server.member.domain.entity.Member;
@@ -34,9 +36,6 @@ public class MemberAuthService {
 
     @Transactional(readOnly = true)
     public void sendCode(final MemberSendCodeRequest request) {
-        if (memberRepository.existsByPhone_Value(request.phone())) {
-            throw new IllegalArgumentException("이미 가입된 휴대폰 번호입니다.");
-        }
         if (Boolean.TRUE.equals(redisTemplate.hasKey(PHONE_KEY + request.phone()))) {
             throw new IllegalArgumentException("인증 번호가 이미 전송되었습니다.");
         }
@@ -59,6 +58,9 @@ public class MemberAuthService {
         if (!savedCode.equals(request.code())) {
             throw new IllegalArgumentException("인증 번호가 일치하지 않습니다.");
         }
+        if (memberRepository.existsByPhone_Value(request.phone())) {
+            throw new IllegalArgumentException("이미 가입된 휴대폰 번호입니다.");
+        }
 
         final Member member = Member.create(request.phone());
 
@@ -75,6 +77,10 @@ public class MemberAuthService {
 
     @Transactional
     public void activate(final Long memberId, final MemberActivateRequest request) {
+        if (memberRepository.existsByNickname_Value(request.nickname())) {
+            throw new IllegalArgumentException("이미 가입된 닉네임입니다.");
+        }
+
         final Member member = getMember(memberId);
 
         member.activate(request.nickname(), request.birthYear(), request.gender());
@@ -140,7 +146,7 @@ public class MemberAuthService {
 
     private void addBlacklistedAccessToken(final String accessToken) {
         redisTemplate.opsForValue().set(
-            JwtService.BLACKLIST_ACCESS_TOKEN_KEY + accessToken,
+            BLACKLIST_ACCESS_TOKEN_KEY + accessToken,
             "1",
             Duration.ofSeconds(jwtProperties.accessTokenExpiration())
         );
