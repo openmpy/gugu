@@ -13,3 +13,9 @@ spring:
         show_sql: true
         highlight_sql: true
     open-in-view: false
+
+app:
+  jwt:
+    access-token-expiration: 1800
+    refresh-token-expiration: 604800
+    secret-key: jFkYae/7pyMt4avcZQNIAOtIc4VLk9RmgiKECyg09iw=
