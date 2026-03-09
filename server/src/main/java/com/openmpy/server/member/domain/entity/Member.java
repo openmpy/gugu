@@ -26,7 +26,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("status = ACTIVE")
+@SQLRestriction("status = 'ACTIVE'")
 @Entity
 public class Member {
 
