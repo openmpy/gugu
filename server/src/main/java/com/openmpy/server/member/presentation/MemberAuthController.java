@@ -1,10 +1,13 @@
 package com.openmpy.server.member.presentation;
 
+import com.openmpy.server.auth.annotation.Login;
 import com.openmpy.server.member.application.MemberAuthService;
+import com.openmpy.server.member.dto.request.MemberDeleteRequest;
 import com.openmpy.server.member.dto.request.MemberSignupRequest;
 import com.openmpy.server.member.dto.response.MemberSignupResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +26,14 @@ public class MemberAuthController {
     ) {
         final MemberSignupResponse response = memberAuthService.signup(request);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/v1/members")
+    public ResponseEntity<Void> delete(
+        @Login final Long memberId,
+        @RequestBody final MemberDeleteRequest request
+    ) {
+        memberAuthService.delete(memberId, request);
+        return ResponseEntity.noContent().build();
     }
 }
