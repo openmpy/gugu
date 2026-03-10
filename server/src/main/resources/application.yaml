@@ -1,21 +1,3 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/gugu
-    username: root
-    password: 1234
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-        highlight_sql: true
-    open-in-view: false
-
-app:
-  jwt:
-    access-token-expiration: 1800
-    refresh-token-expiration: 604800
-    secret-key: jFkYae/7pyMt4avcZQNIAOtIc4VLk9RmgiKECyg09iw=
+  profiles:
+    active: local
