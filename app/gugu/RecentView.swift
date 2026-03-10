@@ -142,7 +142,7 @@ struct RecentView: View {
             .alert("한줄 소개", isPresented: $showAlert) {
                 TextField("내용을 입력해주세요", text: $content)
                 
-                Button("확인", role: .confirm) {
+                Button("작성", role: .confirm) {
                     savedContent = content
                 }
                 

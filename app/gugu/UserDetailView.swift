@@ -5,8 +5,14 @@ struct UserDetailView: View {
     
     private let imageSeeds = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     
+    @AppStorage("sentMessage") private var savedMessage: String = ""
+    
     @State private var currentPage: Int = 0
-    @State private var showSheet = false
+    @State private var message: String = ""
+    
+    @State private var showSheet: Bool = false
+    @State private var showMessageAlert: Bool = false
+    @State private var showBlockAlert: Bool = false
     
     var body: some View {
         ZStack {
@@ -113,6 +119,7 @@ struct UserDetailView: View {
                             .padding(16)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color(.systemGray6))
+                            .cornerRadius(7)
                             .padding(.vertical)
                     }
                     .padding()
@@ -139,7 +146,8 @@ struct UserDetailView: View {
                     Spacer()
                     
                     Button {
-                        print("메세지 클릭")
+                        showMessageAlert = true
+                        message = savedMessage
                     } label: {
                         Image(systemName: "message.fill")
                             .frame(width: 60, height: 60)
@@ -175,7 +183,7 @@ struct UserDetailView: View {
                     Spacer()
                     
                     Button {
-                        print("차단 클릭")
+                        showBlockAlert = true
                     } label: {
                         Image(systemName: "nosign")
                             .frame(width: 60, height: 60)
@@ -187,6 +195,7 @@ struct UserDetailView: View {
                     Spacer()
                 }
             }
+            .ignoresSafeArea(.keyboard)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
@@ -208,6 +217,25 @@ struct UserDetailView: View {
                     )
                 }
             }
+        }
+        .alert("쪽지", isPresented: $showMessageAlert) {
+            TextField("내용을 입력해주세요", text: $message)
+            
+            Button("전송", role: .confirm) {
+                savedMessage = message
+                print(savedMessage)
+            }
+            
+            Button("취소", role: .cancel) { }
+        }
+        .alert("차단", isPresented: $showBlockAlert) {
+            Button("차단", role: .destructive) {
+                print("차단하기")
+            }
+            
+            Button("취소", role: .cancel) { }
+        } message: {
+            Text("차단하면 채팅 내역이 모두 삭제됩니다.")
         }
     }
 }
