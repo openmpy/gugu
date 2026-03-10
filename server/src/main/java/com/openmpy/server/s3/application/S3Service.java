@@ -4,6 +4,8 @@ import com.openmpy.server.global.properties.S3Properties;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
@@ -12,8 +14,9 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Service
 public class S3Service {
 
-    private final S3Presigner s3Presigner;
     private final S3Properties s3Properties;
+    private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
     public String createPresignedUrl(final String key, final String contentType) {
         final PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
@@ -29,5 +32,14 @@ public class S3Service {
         );
 
         return presignedPutObject.url().toString();
+    }
+
+    public void deleteImage(final String key) {
+        final DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+            .bucket(s3Properties.bucket())
+            .key(key)
+            .build();
+
+        s3Client.deleteObject(objectRequest);
     }
 }

@@ -4,6 +4,7 @@ import com.openmpy.server.global.properties.S3Properties;
 import com.openmpy.server.member.domain.constants.MemberImageType;
 import com.openmpy.server.member.domain.entity.Member;
 import com.openmpy.server.member.domain.entity.MemberImage;
+import com.openmpy.server.member.dto.request.MemberDeleteImagesRequest;
 import com.openmpy.server.member.dto.request.MemberSaveImagesRequest;
 import com.openmpy.server.member.dto.request.PresignedImagesRequest;
 import com.openmpy.server.member.dto.response.PresignedImagesResponse;
@@ -45,10 +46,7 @@ public class MemberImageService {
     }
 
     @Transactional
-    public void saveImages(
-        final Long memberId,
-        final MemberSaveImagesRequest request
-    ) {
+    public void saveImages(final Long memberId, final MemberSaveImagesRequest request) {
         final Member member = memberRepository.getReferenceById(memberId);
 
         request.images().forEach(it -> {
@@ -60,6 +58,21 @@ public class MemberImageService {
             );
 
             memberImageRepository.save(memberImage);
+        });
+    }
+
+    @Transactional
+    public void deleteImages(final Long memberId, final MemberDeleteImagesRequest request) {
+        final Member member = memberRepository.getReferenceById(memberId);
+
+        request.images().forEach(it -> {
+            final MemberImage memberImage = memberImageRepository.findByIdAndMember(
+                it.id(),
+                member
+            ).orElseThrow(() -> new IllegalArgumentException("회원 이미지를 찾을 수 없습니다."));
+
+            memberImageRepository.delete(memberImage);
+            s3Service.deleteImage(it.key());
         });
     }
 
