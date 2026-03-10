@@ -22,73 +22,6 @@ struct ContentView: View {
     }
 }
 
-struct RecentView: View {
-    enum Gender: String, CaseIterable, Identifiable {
-        case all, male, female
-        var id: Self { self }
-    }
-    
-    @AppStorage("selectedRecentGender") private var selectedGender: Gender = .all
-    @AppStorage("recentContent") private var savedContent: String = ""
-    
-    @State private var showAlert: Bool = false
-    @State private var content: String = ""
-    
-    var body: some View {
-        NavigationStack {
-            VStack {
-                Picker("Gender", selection: $selectedGender) {
-                    Text("전체").tag(Gender.all)
-                    Text("여자").tag(Gender.female)
-                    Text("남자").tag(Gender.male)
-                }
-                .pickerStyle(.segmented)
-                .padding()
-                
-                ScrollView {
-                    LazyVStack(alignment: .leading) {
-                        ForEach(0..<100) { i in
-                            Text("Row \(i)")
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                }
-            }
-            .navigationTitle("최근")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        print("검색 아이콘 클릭")
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showAlert = true
-                        content = savedContent
-                    } label: {
-                        Image(systemName: "square.and.pencil")
-                    }
-                }
-            }
-            .alert("한줄 작성", isPresented: $showAlert) {
-                TextField("내용을 입력해주세요", text: $content)
-                
-                Button("확인", role: .confirm) {
-                    savedContent = content
-                }
-                
-                Button("취소", role: .cancel) {
-                }
-            }
-        }
-    }
-}
-
 struct LocationView: View {
     enum Gender: String, CaseIterable, Identifiable {
         case all, male, female
@@ -106,7 +39,9 @@ struct LocationView: View {
                     Text("남자").tag(Gender.male)
                 }
                 .pickerStyle(.segmented)
-                .padding()
+                .padding(.horizontal)
+                .padding(.top)
+                .padding(.bottom, 5)
                 
                 ScrollView {
                     LazyVStack(alignment: .leading) {
@@ -150,7 +85,9 @@ struct ChatView: View {
                     Text("안읽음").tag(Status.unread)
                 }
                 .pickerStyle(.segmented)
-                .padding()
+                .padding(.horizontal)
+                .padding(.top)
+                .padding(.bottom, 5)
                 
                 ScrollView {
                     LazyVStack(alignment: .leading) {
