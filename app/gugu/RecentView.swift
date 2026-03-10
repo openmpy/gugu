@@ -31,12 +31,28 @@ struct RecentView: View {
                             NavigationLink(destination: UserDetailView(id: i)) {
                                 HStack(alignment: .center) {
                                     if i.isMultiple(of: 2) {
-                                        AsyncImage(url: URL(string: "https://picsum.photos/60")) { image in
-                                            image
-                                                .resizable()
-                                                .scaledToFill()
-                                        } placeholder: {
-                                            ProgressView()
+                                        AsyncImage(url: URL(string: "https://picsum.photos/100")) { phase in
+                                            switch phase {
+                                            case .empty:
+                                                ProgressView()
+                                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                                    .background(Color(.systemGray5))
+                                            case .success(let image):
+                                                image
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                            case .failure:
+                                                Image(systemName: "photo")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .foregroundColor(.gray)
+                                                    .padding(7)
+                                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                                    .background(Color(.systemGray5))
+                                            @unknown default:
+                                                EmptyView()
+                                            }
                                         }
                                         .frame(width: 60, height: 60)
                                         .clipShape(Circle())
