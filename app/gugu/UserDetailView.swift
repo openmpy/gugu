@@ -136,10 +136,10 @@ struct UserDetailView: View {
                     Button {
                         print("좋아요 클릭")
                     } label: {
-                        Image(systemName: "heart")
+                        Image(systemName: "heart.fill")
                             .frame(width: 60, height: 60)
                             .font(.system(size: 30))
-                            .foregroundColor(.red)
+                            .foregroundColor(.gray)
                             .glassEffect()
                     }
                     

@@ -46,10 +46,9 @@ struct RecentView: View {
                                                 Image(systemName: "photo")
                                                     .resizable()
                                                     .scaledToFit()
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(.blue)
                                                     .padding(7)
                                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                    .background(Color(.systemGray5))
                                             @unknown default:
                                                 EmptyView()
                                             }
