@@ -22,52 +22,6 @@ struct ContentView: View {
     }
 }
 
-struct LocationView: View {
-    enum Gender: String, CaseIterable, Identifiable {
-        case all, male, female
-        var id: Self { self }
-    }
-    
-    @AppStorage("selectedLocationGender") private var selectedGender: Gender = .all
-    
-    var body: some View {
-        NavigationStack {
-            VStack {
-                Picker("Gender", selection: $selectedGender) {
-                    Text("전체").tag(Gender.all)
-                    Text("여자").tag(Gender.female)
-                    Text("남자").tag(Gender.male)
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.top)
-                .padding(.bottom, 5)
-                
-                ScrollView {
-                    LazyVStack(alignment: .leading) {
-                        ForEach(0..<100) { i in
-                            Text("Row \(i)")
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                }
-            }
-            .navigationTitle("거리")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        print("검색 아이콘 클릭")
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                }
-            }
-        }
-    }
-}
-
 struct ChatView: View {
     enum Status: String, CaseIterable, Identifiable {
         case all, read, unread
