@@ -14,13 +14,15 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Service
 public class S3Service {
 
+    public static final int PRESIGNED_URL_EXPIRE_MINUTES = 5;
+
     private final S3Properties s3Properties;
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
 
     public String createPresignedUrl(final String key, final String contentType) {
         final PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-            .signatureDuration(Duration.ofMinutes(5))
+            .signatureDuration(Duration.ofMinutes(PRESIGNED_URL_EXPIRE_MINUTES))
             .putObjectRequest(r -> r
                 .bucket(s3Properties.bucket())
                 .key(key)
