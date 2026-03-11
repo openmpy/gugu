@@ -11,6 +11,8 @@ struct LocationView: View {
     
     @StateObject private var locationManager = LocationManager()
     
+    @State private var goUserSearch: Bool = false
+    
     var body: some View {
         NavigationStack {
             if locationManager.isLocationEnabled {
@@ -123,9 +125,12 @@ struct LocationView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
-                            print("검색 아이콘 클릭")
+                            goUserSearch = true
                         } label: {
                             Image(systemName: "magnifyingglass")
+                        }
+                        .navigationDestination(isPresented: $goUserSearch) {
+                            UserSearchView()
                         }
                     }
                 }

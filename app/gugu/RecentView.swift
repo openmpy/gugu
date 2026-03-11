@@ -11,6 +11,7 @@ struct RecentView: View {
     
     @State private var showAlert: Bool = false
     @State private var content: String = ""
+    @State private var goUserSearch: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -123,9 +124,12 @@ struct RecentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        print("검색 아이콘 클릭")
+                        goUserSearch = true
                     } label: {
                         Image(systemName: "magnifyingglass")
+                    }
+                    .navigationDestination(isPresented: $goUserSearch) {
+                        UserSearchView()
                     }
                 }
                 
