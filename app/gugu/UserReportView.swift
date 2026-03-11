@@ -108,7 +108,7 @@ struct UserReportView: View {
                         .cornerRadius(12)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(.systemGray6), lineWidth: 1)
+                                .stroke(Color(.systemGray4), lineWidth: 1)
                         )
                 }
                 .padding(.bottom)

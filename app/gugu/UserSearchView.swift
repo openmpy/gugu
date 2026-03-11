@@ -16,41 +16,35 @@ struct UserSearchView: View {
                                         case .empty:
                                             ProgressView()
                                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .background(Color(.systemGray5))
-                                                .clipShape(Circle())
-                                                .overlay(Circle().stroke(.clear, lineWidth: 1))
                                         case .success(let image):
                                             image
                                                 .resizable()
                                                 .scaledToFill()
                                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .clipShape(Circle())
-                                                .overlay(Circle().stroke(.clear, lineWidth: 1))
                                         case .failure:
                                             Image(systemName: "photo")
                                                 .resizable()
                                                 .scaledToFit()
-                                                .foregroundColor(.blue)
-                                                .padding(7)
+                                                .padding(15)
                                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .clipShape(Circle())
-                                                .overlay(Circle().stroke(.blue, lineWidth: 1))
                                         @unknown default:
                                             EmptyView()
                                         }
                                     }
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.blue)
+                                    .frame(width: 58, height: 58)
+                                    .foregroundStyle(Color(red: 219/255, green: 234/255, blue: 254/255))
+                                    .background(Color(red: 120/255, green: 150/255, blue: 240/255))
+                                    .clipShape(Circle())
                                     .padding(.trailing, 5)
                                 } else {
                                     Image(systemName: "person.fill")
                                         .resizable()
                                         .scaledToFit()
-                                        .padding(7)
-                                        .frame(width: 60, height: 60)
+                                        .padding(15)
+                                        .frame(width: 58, height: 58)
+                                        .foregroundStyle(Color(red: 252/255, green: 231/255, blue: 243/255))
+                                        .background(Color(red: 255/255, green: 120/255, blue: 160/255))
                                         .clipShape(Circle())
-                                        .overlay(Circle().stroke(.pink, lineWidth: 1))
-                                        .foregroundColor(.pink)
                                         .padding(.trailing, 5)
                                 }
                                 
@@ -58,7 +52,7 @@ struct UserSearchView: View {
                                     HStack {
                                         Text("닉네임 \(i)")
                                             .font(.headline)
-                                            .foregroundColor(i % 2 == 0 ? .blue : .pink)
+                                            .foregroundColor(i % 2 == 0 ? Color(red: 120/255, green: 150/255, blue: 240/255) : Color(red: 255/255, green: 120/255, blue: 160/255))
                                         
                                         Spacer()
                                         

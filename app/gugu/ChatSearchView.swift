@@ -16,45 +16,39 @@ struct ChatSearchView: View {
                                         case .empty:
                                             ProgressView()
                                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .background(Color(.systemGray5))
-                                                .clipShape(Circle())
-                                                .overlay(Circle().stroke(.clear, lineWidth: 1))
                                         case .success(let image):
                                             image
                                                 .resizable()
                                                 .scaledToFill()
                                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .clipShape(Circle())
-                                                .overlay(Circle().stroke(.clear, lineWidth: 1))
                                         case .failure:
                                             Image(systemName: "photo")
                                                 .resizable()
                                                 .scaledToFit()
-                                                .foregroundColor(.secondary)
-                                                .padding(7)
+                                                .padding(15)
                                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .clipShape(Circle())
-                                                .overlay(Circle().stroke(.secondary, lineWidth: 1))
                                         @unknown default:
                                             EmptyView()
                                         }
                                     }
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.secondary)
+                                    .frame(width: 58, height: 58)
+                                    .foregroundStyle(Color(.systemGray5))
+                                    .background(Color(.systemGray3))
+                                    .clipShape(Circle())
                                     .padding(.trailing, 5)
                                 } else {
                                     Image(systemName: "person.fill")
                                         .resizable()
                                         .scaledToFit()
-                                        .padding(7)
-                                        .frame(width: 60, height: 60)
+                                        .padding(15)
+                                        .frame(width: 58, height: 58)
+                                        .foregroundStyle(Color(.systemGray5))
+                                        .background(Color(.systemGray3))
                                         .clipShape(Circle())
-                                        .overlay(Circle().stroke(.secondary, lineWidth: 1))
-                                        .foregroundColor(.secondary)
                                         .padding(.trailing, 5)
                                 }
                                 
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading, spacing: 5) {
                                     HStack {
                                         Text("닉네임 \(i)")
                                             .font(.headline)
@@ -67,13 +61,11 @@ struct ChatSearchView: View {
                                             .foregroundColor(.secondary)
                                     }
                                     
-                                    HStack {
+                                    HStack(alignment: .top) {
                                         Text("안녕하세요 \(i)")
                                             .font(.subheadline)
-                                            .lineLimit(1)
-                                            .foregroundColor(.secondary)
-                                        
-                                            .font(.footnote)
+                                            .lineLimit(2)
+                                            .multilineTextAlignment(.leading)
                                             .foregroundColor(.secondary)
                                         
                                         Spacer()
@@ -88,8 +80,6 @@ struct ChatSearchView: View {
                                             .clipShape(Capsule())
                                     }
                                 }
-                                
-                                Spacer()
                             }
                         }
                         .navigationLinkIndicatorVisibility(.hidden)
