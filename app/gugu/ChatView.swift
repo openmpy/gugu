@@ -1,25 +1,22 @@
 import SwiftUI
 
-struct RecentView: View {
-    enum Gender: String, CaseIterable, Identifiable {
-        case all, male, female
+struct ChatView: View {
+    enum Status: String, CaseIterable, Identifiable {
+        case all, read, unread
         var id: Self { self }
     }
     
-    @AppStorage("selectedRecentGender") private var selectedGender: Gender = .all
-    @AppStorage("recentContent") private var savedContent: String = ""
+    @AppStorage("selectedChatStatus") private var selectedStatus: Status = .all
     
-    @State private var showAlert: Bool = false
-    @State private var content: String = ""
-    @State private var goUserSearch: Bool = false
+    @State private var goChatUserSearch: Bool = false
     
     var body: some View {
         NavigationStack {
             VStack {
-                Picker("Gender", selection: $selectedGender) {
-                    Text("전체").tag(Gender.all)
-                    Text("여자").tag(Gender.female)
-                    Text("남자").tag(Gender.male)
+                Picker("Status", selection: $selectedStatus) {
+                    Text("전체").tag(Status.all)
+                    Text("읽음").tag(Status.read)
+                    Text("안읽음").tag(Status.unread)
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
@@ -51,17 +48,17 @@ struct RecentView: View {
                                                 Image(systemName: "photo")
                                                     .resizable()
                                                     .scaledToFit()
-                                                    .foregroundColor(.blue)
+                                                    .foregroundColor(.secondary)
                                                     .padding(7)
                                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                                     .clipShape(Circle())
-                                                    .overlay(Circle().stroke(.blue, lineWidth: 1))
+                                                    .overlay(Circle().stroke(.secondary, lineWidth: 1))
                                             @unknown default:
                                                 EmptyView()
                                             }
                                         }
                                         .frame(width: 60, height: 60)
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.secondary)
                                         .padding(.trailing, 5)
                                     } else {
                                         Image(systemName: "person.fill")
@@ -70,8 +67,8 @@ struct RecentView: View {
                                             .padding(7)
                                             .frame(width: 60, height: 60)
                                             .clipShape(Circle())
-                                            .overlay(Circle().stroke(.pink, lineWidth: 1))
-                                            .foregroundColor(.pink)
+                                            .overlay(Circle().stroke(.secondary, lineWidth: 1))
+                                            .foregroundColor(.secondary)
                                             .padding(.trailing, 5)
                                     }
                                     
@@ -79,7 +76,7 @@ struct RecentView: View {
                                         HStack {
                                             Text("닉네임 \(i)")
                                                 .font(.headline)
-                                                .foregroundColor(i % 2 == 0 ? .blue : .pink)
+                                                .foregroundColor(.primary)
                                             
                                             Spacer()
                                             
@@ -88,26 +85,26 @@ struct RecentView: View {
                                                 .foregroundColor(.secondary)
                                         }
                                         
-                                        Text("안녕하세요 \(i)")
-                                            .font(.subheadline)
-                                            .lineLimit(1)
-                                            .foregroundColor(.secondary)
-                                        
                                         HStack {
-                                            HStack {
-                                                Text(i % 2 == 0 ? "남자" : "여자")
-                                                Text("·")
-                                                Text("29살")
-                                                Text("·")
-                                                Text("♥ 100")
-                                            }
+                                            Text("안녕하세요 \(i)")
+                                                .font(.subheadline)
+                                                .lineLimit(1)
+                                                .foregroundColor(.secondary)
+                                            
+                                                .font(.footnote)
+                                                .foregroundColor(.secondary)
                                             
                                             Spacer()
                                             
-                                            Text(i % 2 == 0 ? "25.2km" : "")
+                                            Text("3")
+                                                .font(.caption2)
+                                                .fontWeight(.bold)
+                                                .foregroundColor(.white)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 3)
+                                                .background(Color.red)
+                                                .clipShape(Capsule())
                                         }
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
                                     }
                                     
                                     Spacer()
@@ -123,42 +120,31 @@ struct RecentView: View {
                     .padding()
                 }
             }
-            .navigationTitle("최근")
+            .navigationTitle("채팅")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        goUserSearch = true
+                        goChatUserSearch = true
                     } label: {
                         Image(systemName: "magnifyingglass")
                     }
-                    .navigationDestination(isPresented: $goUserSearch) {
-                        UserSearchView()
+                    .navigationDestination(isPresented: $goChatUserSearch) {
+                        ChatSearchView()
                     }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        showAlert = true
-                        content = savedContent
                     } label: {
-                        Image(systemName: "square.and.pencil")
+                        Image(systemName: "bell")
                     }
                 }
-            }
-            .alert("한줄 소개", isPresented: $showAlert) {
-                TextField("내용을 입력해주세요", text: $content)
-                
-                Button("작성", role: .confirm) {
-                    savedContent = content
-                }
-                
-                Button("취소", role: .cancel) { }
             }
         }
     }
 }
 
 #Preview {
-    RecentView()
+    ChatView()
 }

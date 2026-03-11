@@ -39,11 +39,15 @@ struct LocationView: View {
                                                     ProgressView()
                                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                                                         .background(Color(.systemGray5))
+                                                        .clipShape(Circle())
+                                                        .overlay(Circle().stroke(.clear, lineWidth: 1))
                                                 case .success(let image):
                                                     image
                                                         .resizable()
                                                         .scaledToFill()
                                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                                        .clipShape(Circle())
+                                                        .overlay(Circle().stroke(.clear, lineWidth: 1))
                                                 case .failure:
                                                     Image(systemName: "photo")
                                                         .resizable()
@@ -51,13 +55,13 @@ struct LocationView: View {
                                                         .foregroundColor(.blue)
                                                         .padding(7)
                                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                                        .clipShape(Circle())
+                                                        .overlay(Circle().stroke(.blue, lineWidth: 1))
                                                 @unknown default:
                                                     EmptyView()
                                                 }
                                             }
                                             .frame(width: 60, height: 60)
-                                            .clipShape(Circle())
-                                            .overlay(Circle().stroke(.blue, lineWidth: 1))
                                             .foregroundColor(.blue)
                                             .padding(.trailing, 5)
                                         } else {

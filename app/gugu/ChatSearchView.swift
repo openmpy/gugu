@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct UserSearchView: View {
+struct ChatSearchView: View {
     @State private var searchText: String = ""
     
     var body: some View {
@@ -30,17 +30,17 @@ struct UserSearchView: View {
                                             Image(systemName: "photo")
                                                 .resizable()
                                                 .scaledToFit()
-                                                .foregroundColor(.blue)
+                                                .foregroundColor(.secondary)
                                                 .padding(7)
                                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                                 .clipShape(Circle())
-                                                .overlay(Circle().stroke(.blue, lineWidth: 1))
+                                                .overlay(Circle().stroke(.secondary, lineWidth: 1))
                                         @unknown default:
                                             EmptyView()
                                         }
                                     }
                                     .frame(width: 60, height: 60)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.secondary)
                                     .padding(.trailing, 5)
                                 } else {
                                     Image(systemName: "person.fill")
@@ -49,8 +49,8 @@ struct UserSearchView: View {
                                         .padding(7)
                                         .frame(width: 60, height: 60)
                                         .clipShape(Circle())
-                                        .overlay(Circle().stroke(.pink, lineWidth: 1))
-                                        .foregroundColor(.pink)
+                                        .overlay(Circle().stroke(.secondary, lineWidth: 1))
+                                        .foregroundColor(.secondary)
                                         .padding(.trailing, 5)
                                 }
                                 
@@ -58,7 +58,7 @@ struct UserSearchView: View {
                                     HStack {
                                         Text("닉네임 \(i)")
                                             .font(.headline)
-                                            .foregroundColor(i % 2 == 0 ? .blue : .pink)
+                                            .foregroundColor(.primary)
                                         
                                         Spacer()
                                         
@@ -67,27 +67,29 @@ struct UserSearchView: View {
                                             .foregroundColor(.secondary)
                                     }
                                     
-                                    Text("안녕하세요 \(i)")
-                                        .font(.subheadline)
-                                        .lineLimit(1)
-                                        .foregroundColor(.secondary)
-                                    
                                     HStack {
-                                        HStack {
-                                            Text(i % 2 == 0 ? "남자" : "여자")
-                                            Text("·")
-                                            Text("29살")
-                                            Text("·")
-                                            Text("♥ 100")
-                                        }
+                                        Text("안녕하세요 \(i)")
+                                            .font(.subheadline)
+                                            .lineLimit(1)
+                                            .foregroundColor(.secondary)
+                                        
+                                            .font(.footnote)
+                                            .foregroundColor(.secondary)
                                         
                                         Spacer()
                                         
-                                        Text(i % 2 == 0 ? "25.2km" : "")
+                                        Text("3")
+                                            .font(.caption2)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 3)
+                                            .background(Color.red)
+                                            .clipShape(Capsule())
                                     }
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
                                 }
+                                
+                                Spacer()
                             }
                         }
                         .navigationLinkIndicatorVisibility(.hidden)
@@ -99,7 +101,7 @@ struct UserSearchView: View {
                     prompt: "닉네임을 입력해주세요"
                 )
             }
-            .navigationTitle("회원 검색")
+            .navigationTitle("채팅 검색")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
         }
@@ -108,6 +110,6 @@ struct UserSearchView: View {
 
 #Preview {
     NavigationStack {
-        UserSearchView()
+        ChatSearchView()
     }
 }
