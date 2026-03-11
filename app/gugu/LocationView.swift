@@ -145,7 +145,7 @@ struct LocationView: View {
                             .font(.headline)
                             .padding(.horizontal, 30)
                             .padding(.vertical, 10)
-                            .background(.blue)
+                            .background(Color.accentColor)
                             .foregroundColor(.white)
                             .clipShape(Capsule())
                     }

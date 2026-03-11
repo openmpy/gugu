@@ -14,6 +14,8 @@ struct UserDetailView: View {
     @State private var showMessageAlert: Bool = false
     @State private var showBlockAlert: Bool = false
     
+    @State private var goReport: Bool = false
+    
     var body: some View {
         ZStack {
             ScrollView {
@@ -119,7 +121,7 @@ struct UserDetailView: View {
                             .padding(16)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color(.systemGray6))
-                            .cornerRadius(7)
+                            .cornerRadius(12)
                             .padding(.vertical)
                     }
                     .padding()
@@ -210,13 +212,20 @@ struct UserDetailView: View {
                     ActionSheet(
                         title: Text(""),
                         buttons: [
-                            .default(Text("비밀 사진 열기")) { print("비밀 사진 열기") },
-                            .destructive(Text("신고하기")) { print("신고 선택") },
+                            .default(Text("비밀 사진 열기")) {
+                                print("비밀 사진 열기")
+                            },
+                            .destructive(Text("신고하기")) {
+                                goReport = true
+                            },
                             .cancel()
                         ]
                     )
                 }
             }
+        }
+        .navigationDestination(isPresented: $goReport) {
+            UserReportView()
         }
         .alert("쪽지", isPresented: $showMessageAlert) {
             TextField("내용을 입력해주세요", text: $message)
