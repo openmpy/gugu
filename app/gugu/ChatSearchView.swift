@@ -8,7 +8,7 @@ struct ChatSearchView: View {
             VStack {
                 List {
                     ForEach(0..<100) { i in
-                        NavigationLink(destination: UserDetailView(id: i)) {
+                        NavigationLink(destination: ChatDetailView(id: i)) {
                             HStack(alignment: .center) {
                                 if i.isMultiple(of: 2) {
                                     AsyncImage(url: URL(string: "https://picsum.photos/100")) { phase in

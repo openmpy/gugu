@@ -22,12 +22,6 @@ struct ContentView: View {
     }
 }
 
-struct SettingView: View {
-    var body: some View {
-        Text("설정 화면")
-    }
-}
-
 #Preview {
     ContentView()
 }
