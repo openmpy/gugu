@@ -7,8 +7,8 @@ struct ChatView: View {
     }
     
     @AppStorage("selectedChatStatus") private var selectedStatus: Status = .all
-    
     @State private var goChatUserSearch: Bool = false
+    @State private var chats = Array(0..<100) // 채팅 데이터 예시
     
     var body: some View {
         NavigationStack {
@@ -23,90 +23,33 @@ struct ChatView: View {
                 .padding(.top)
                 .padding(.bottom, 5)
                 
-                ScrollView {
-                    LazyVStack(alignment: .leading) {
-                        ForEach(0..<100) { i in
-                            NavigationLink(destination: ChatDetailView(id: i)) {
-                                HStack(alignment: .center) {
-                                    if i.isMultiple(of: 2) {
-                                        AsyncImage(url: URL(string: "https://picsum.photos/100")) { phase in
-                                            switch phase {
-                                            case .empty:
-                                                ProgressView()
-                                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                            case .success(let image):
-                                                image
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                            case .failure:
-                                                Image(systemName: "photo")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .padding(15)
-                                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                            @unknown default:
-                                                EmptyView()
-                                            }
-                                        }
-                                        .frame(width: 58, height: 58)
-                                        .foregroundStyle(Color(.systemGray5))
-                                        .background(Color(.systemGray3))
-                                        .clipShape(Circle())
-                                        .padding(.trailing, 5)
-                                    } else {
-                                        Image(systemName: "person.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .padding(15)
-                                            .frame(width: 58, height: 58)
-                                            .foregroundStyle(Color(.systemGray5))
-                                            .background(Color(.systemGray3))
-                                            .clipShape(Circle())
-                                            .padding(.trailing, 5)
-                                    }
-                                    
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        HStack {
-                                            Text("닉네임 \(i)")
-                                                .font(.headline)
-                                                .foregroundColor(.primary)
-                                            
-                                            Spacer()
-                                            
-                                            Text("방금 전")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        
-                                        HStack(alignment: .top) {
-                                            Text("안녕하세요 \(i)")
-                                                .font(.subheadline)
-                                                .lineLimit(2)
-                                                .multilineTextAlignment(.leading)
-                                                .foregroundColor(.secondary)
-                                            
-                                            Spacer()
-                                            
-                                            Text("3")
-                                                .font(.caption2)
-                                                .fontWeight(.bold)
-                                                .foregroundColor(.white)
-                                                .padding(.horizontal, 6)
-                                                .padding(.vertical, 3)
-                                                .background(Color.red)
-                                                .clipShape(Capsule())
-                                        }
-                                    }
+                List {
+                    ForEach(chats, id: \.self) { i in
+                        NavigationLink(destination: ChatDetailView(id: i)) {
+                            chatRow(i: i)
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .navigationLinkIndicatorVisibility(.hidden)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                withAnimation {
                                 }
-                                .padding(.vertical, 5)
+                            } label: {
+                                Label("삭제", systemImage: "trash")
                             }
-                            .navigationLinkIndicatorVisibility(.hidden)
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            Button(role: .confirm) {
+                                withAnimation {
+                                }
+                            } label: {
+                                Label("읽음", systemImage: "eye")
+                            }
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
                 }
+                .listStyle(.plain)
             }
             .navigationTitle("채팅")
             .navigationBarTitleDisplayMode(.inline)
@@ -130,6 +73,82 @@ struct ChatView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    func chatRow(i: Int) -> some View {
+        HStack(alignment: .center) {
+            if i.isMultiple(of: 2) {
+                AsyncImage(url: URL(string: "https://picsum.photos/100")) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(width: 58, height: 58)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 58, height: 58)
+                            .clipShape(Circle())
+                    case .failure:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFit()
+                            .padding(15)
+                            .frame(width: 58, height: 58)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .background(Color(.systemGray3))
+                .clipShape(Circle())
+                .padding(.trailing, 5)
+            } else {
+                Image(systemName: "person.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .padding(15)
+                    .frame(width: 58, height: 58)
+                    .background(Color(.systemGray3))
+                    .foregroundColor(Color(.systemGray5))
+                    .clipShape(Circle())
+                    .padding(.trailing, 5)
+            }
+            
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    Text("닉네임 \(i)")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Text("방금 전")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                HStack(alignment: .top) {
+                    Text("안녕하세요 \(i)")
+                        .font(.subheadline)
+                        .lineLimit(2)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    Text("3")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(Color.red)
+                        .clipShape(Capsule())
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 10)
     }
 }
 

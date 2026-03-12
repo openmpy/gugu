@@ -6,10 +6,14 @@ struct UserImageView: View {
     
     var body: some View {
         NavigationStack {
+            Spacer()
+            
             image
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .zoomable()
+            
+            Spacer()
         }
         .background(.black)
     }

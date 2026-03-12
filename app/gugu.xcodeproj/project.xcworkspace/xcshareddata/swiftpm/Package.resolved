@@ -1,0 +1,24 @@
+{
+  "originHash" : "f68b3829551b35a5bc088994d02b0e5e719f4a2faa002c14b354bbe86cbd87b5",
+  "pins" : [
+    {
+      "identity" : "photozoomui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ryu0118/PhotoZoomUI",
+      "state" : {
+        "revision" : "77b7b93763bae3172f726a2f5df4998641e0c3cb",
+        "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "zoomable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ryohey/Zoomable.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "27463744a1c82e550959703153bd6f3c62fef906"
+      }
+    }
+  ],
+  "version" : 3
+}
