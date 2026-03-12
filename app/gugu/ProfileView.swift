@@ -21,10 +21,12 @@ struct ProfileView: View {
                                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                                             .background(Color(.systemGray5))
                                     case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        NavigationLink(destination: UserImageView(image: image)) {
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        }
                                     case .failure:
                                         Image(systemName: "photo")
                                             .resizable()

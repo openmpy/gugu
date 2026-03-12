@@ -16,9 +16,6 @@ struct UserDetailView: View {
     
     @State private var goReport: Bool = false
     
-    @State private var selectedURL: URL?
-    @State private var showViewer: Bool = false
-    
     var body: some View {
         ZStack {
             ScrollView {
@@ -35,14 +32,12 @@ struct UserDetailView: View {
                                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                                             .background(Color(.systemGray5))
                                     case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                            .onTapGesture {
-                                                selectedURL = URL(string: "https://picsum.photos/seed/\(seed)/1000")
-                                                showViewer = true
-                                            }
+                                        NavigationLink(destination: UserImageView(image: image)) {
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        }
                                     case .failure:
                                         Image(systemName: "photo")
                                             .resizable()
@@ -52,11 +47,6 @@ struct UserDetailView: View {
                                             .background(Color(.systemGray5))
                                     @unknown default:
                                         EmptyView()
-                                    }
-                                }
-                                .fullScreenCover(isPresented: $showViewer) {
-                                    if let url = selectedURL {
-                                        ImageViewer(url: url)
                                     }
                                 }
                                 .tag(index)
@@ -219,19 +209,10 @@ struct UserDetailView: View {
                 } label: {
                     Image(systemName: "ellipsis")
                 }
-                .actionSheet(isPresented: $showSheet) {
-                    ActionSheet(
-                        title: Text(""),
-                        buttons: [
-                            .default(Text("비밀 사진 열기")) {
-                                print("비밀 사진 열기")
-                            },
-                            .destructive(Text("신고하기")) {
-                                goReport = true
-                            },
-                            .cancel()
-                        ]
-                    )
+                .confirmationDialog("", isPresented: $showSheet) {
+                    Button("비밀 사진 열기") { print("비밀 사진 열기") }
+                    Button("신고하기", role: .destructive) { goReport = true }
+                    Button("취소", role: .cancel) {}
                 }
             }
         }
@@ -256,39 +237,6 @@ struct UserDetailView: View {
             Button("취소", role: .cancel) { }
         } message: {
             Text("차단하면 채팅 내역이 모두 삭제됩니다.")
-        }
-    }
-}
-
-struct ImageViewer: View {
-    let url: URL
-    
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            Color.black.ignoresSafeArea()
-            
-            AsyncImage(url: url) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .ignoresSafeArea()
-            } placeholder: {
-                ProgressView()
-                    .tint(.white)
-            }
-            
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(.black.opacity(0.5))
-                    .clipShape(Circle())
-            }
-            .padding()
         }
     }
 }
