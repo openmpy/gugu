@@ -24,11 +24,11 @@ struct SettingView: View {
             .init(title: "비밀 사진 목록", icon: "photo.fill", color: .green, type: .view(AnyView(SecretPhotoListView()))),
             .init(title: "차단 목록", icon: "nosign", color: .red, type: .view(AnyView(BlockListView()))),
             
-                .init(title: "포인트", icon: "star.circle.fill", color: .yellow, type: .view(AnyView(PointView()))),
+            .init(title: "포인트", icon: "star.circle.fill", color: .yellow, type: .view(AnyView(PointView()))),
             .init(title: "출석 체크", icon: "calendar.circle.fill", color: .orange, type: .view(AnyView(EmptyView()))),
             .init(title: "광고 보상", icon: "gift.fill", color: .pink, type: .view(AnyView(EmptyView()))),
             
-                .init(title: "공지사항", icon: "megaphone.fill", color: .teal, type: .link("https://example.com/notice")),
+            .init(title: "공지사항", icon: "megaphone.fill", color: .teal, type: .link("https://example.com/notice")),
             .init(title: "문의사항", icon: "envelope.fill", color: .indigo, type: .link(makeMailURL())),
             .init(title: "서비스 이용약관", icon: "doc.text.fill", color: .gray, type: .link("https://example.com/terms")),
             .init(title: "개인정보 취급방침", icon: "shield.fill", color: .green, type: .link("https://example.com/privacy"))

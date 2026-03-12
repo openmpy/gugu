@@ -13,6 +13,8 @@ struct ProfileEditorView: View {
     @State private var birthYear: String = ""
     @State private var bio: String = ""
     
+    @State private var draggingIndex: Int?
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
@@ -165,6 +167,17 @@ struct ProfileEditorView: View {
                             }
                             .offset(x: -5, y: 5)
                         }
+                        
+                        .onDrag {
+                            draggingIndex = index
+                            return NSItemProvider(object: "\(index)" as NSString)
+                        }
+                        
+                        .onDrop(of: [.text], delegate: ImageDropDelegate(
+                            currentIndex: index,
+                            images: images,
+                            draggingIndex: $draggingIndex
+                        ))
                     }
                     
                     if images.wrappedValue.count < 10 {
@@ -188,8 +201,12 @@ struct ProfileEditorView: View {
                         }
                     }
                 }
-                .padding(.bottom)
             }
+            
+            Text("이미지를 드래그하여 순서를 변경할 수 있습니다.")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .padding(.bottom)
         }
     }
     
@@ -218,6 +235,34 @@ struct ProfileEditorView: View {
             from: nil,
             for: nil
         )
+    }
+}
+
+struct ImageDropDelegate: DropDelegate {
+    
+    let currentIndex: Int
+    @Binding var images: [UIImage]
+    @Binding var draggingIndex: Int?
+    
+    func dropEntered(info: DropInfo) {
+        guard let from = draggingIndex else { return }
+        let to = currentIndex
+        
+        if from != to {
+            withAnimation {
+                images.move(
+                    fromOffsets: IndexSet(integer: from),
+                    toOffset: to > from ? to + 1 : to
+                )
+            }
+            
+            draggingIndex = to
+        }
+    }
+    
+    func performDrop(info: DropInfo) -> Bool {
+        draggingIndex = nil
+        return true
     }
 }
 

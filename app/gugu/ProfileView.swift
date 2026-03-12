@@ -104,7 +104,7 @@ struct ProfileView: View {
             }
             .ignoresSafeArea(.keyboard)
         }
-        .navigationTitle("프로필")
+        .navigationTitle("내 프로필")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
