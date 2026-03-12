@@ -8,7 +8,7 @@ struct ChatView: View {
     
     @AppStorage("selectedChatStatus") private var selectedStatus: Status = .all
     @State private var goChatUserSearch: Bool = false
-    @State private var chats = Array(0..<100) // 채팅 데이터 예시
+    @State private var chats = Array(0..<100)
     
     var body: some View {
         NavigationStack {
@@ -101,6 +101,7 @@ struct ChatView: View {
                     }
                 }
                 .background(Color(.systemGray3))
+                .foregroundColor(Color(.systemGray5))
                 .clipShape(Circle())
                 .padding(.trailing, 5)
             } else {
