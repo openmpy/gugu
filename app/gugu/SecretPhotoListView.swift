@@ -33,8 +33,8 @@ struct SecretPhotoListView: View {
                                             }
                                         }
                                         .frame(width: 58, height: 58)
-                                        .foregroundStyle(Color(red: 219/255, green: 234/255, blue: 254/255))
-                                        .background(Color(red: 120/255, green: 150/255, blue: 240/255))
+                                        .foregroundStyle(Color(.systemGray5))
+                                        .background(Color(.systemGray3))
                                         .clipShape(Circle())
                                         .padding(.trailing, 5)
                                     } else {
@@ -43,8 +43,8 @@ struct SecretPhotoListView: View {
                                             .scaledToFit()
                                             .padding(15)
                                             .frame(width: 58, height: 58)
-                                            .foregroundStyle(Color(red: 252/255, green: 231/255, blue: 243/255))
-                                            .background(Color(red: 255/255, green: 120/255, blue: 160/255))
+                                            .foregroundStyle(Color(.systemGray5))
+                                            .background(Color(.systemGray3))
                                             .clipShape(Circle())
                                             .padding(.trailing, 5)
                                     }
@@ -52,14 +52,12 @@ struct SecretPhotoListView: View {
                                     VStack(alignment: .leading) {
                                         Text("닉네임 \(i)")
                                             .font(.headline)
-                                            .foregroundColor(i % 2 == 0 ? Color(red: 120/255, green: 150/255, blue: 240/255) : Color(red: 255/255, green: 120/255, blue: 160/255))
+                                            .foregroundColor(.primary)
                                         
                                         HStack {
                                             Text(i % 2 == 0 ? "남자" : "여자")
                                             Text("·")
                                             Text("29살")
-                                            Text("·")
-                                            Text("♥ 100")
                                         }
                                         .font(.footnote)
                                         .foregroundColor(.secondary)
@@ -73,8 +71,8 @@ struct SecretPhotoListView: View {
                                         Image(systemName: "trash.fill")
                                             .resizable()
                                             .scaledToFit()
-                                            .padding(15)
-                                            .frame(width: 58, height: 58)
+                                            .padding(12)
+                                            .frame(width: 45, height: 45)
                                             .foregroundStyle(.white)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 12)
@@ -93,6 +91,7 @@ struct SecretPhotoListView: View {
             }
             .navigationTitle("비밀 사진 목록")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .tabBar)
         }
         .alert("비밀 사진 닫기", isPresented: $showAlert) {
             Button("닫기", role: .destructive) {

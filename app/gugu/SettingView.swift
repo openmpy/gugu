@@ -19,7 +19,7 @@ struct SettingView: View {
     
     var items: [SettingItem] {
         [
-            .init(title: "내 프로필", icon: "person.crop.circle.fill", color: .blue, type: .view(AnyView(HeartListView()))),
+            .init(title: "내 프로필", icon: "person.crop.circle.fill", color: .blue, type: .view(AnyView(ProfileView()))),
             .init(title: "하트 목록", icon: "heart.fill", color: .red, type: .view(AnyView(HeartListView()))),
             .init(title: "비밀 사진 목록", icon: "photo.fill", color: .green, type: .view(AnyView(SecretPhotoListView()))),
             .init(title: "차단 목록", icon: "nosign", color: .red, type: .view(AnyView(BlockListView()))),

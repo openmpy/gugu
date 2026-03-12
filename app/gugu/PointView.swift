@@ -68,6 +68,7 @@ struct PointView: View {
             }
             .navigationTitle("포인트")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .tabBar)
         }
     }
 }
