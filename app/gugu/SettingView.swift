@@ -25,7 +25,7 @@ struct SettingView: View {
             .init(title: "차단 목록", icon: "nosign", color: .red, type: .view(AnyView(BlockListView()))),
             
             .init(title: "포인트", icon: "star.circle.fill", color: .yellow, type: .view(AnyView(PointView()))),
-            .init(title: "출석 체크", icon: "calendar.circle.fill", color: .orange, type: .view(AnyView(EmptyView()))),
+            .init(title: "출석 체크", icon: "calendar.circle.fill", color: .orange, type: .view(AnyView(TestView()))),
             .init(title: "광고 보상", icon: "gift.fill", color: .pink, type: .view(AnyView(EmptyView()))),
             
             .init(title: "공지사항", icon: "megaphone.fill", color: .teal, type: .link("https://example.com/notice")),

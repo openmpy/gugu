@@ -1,5 +1,5 @@
 {
-  "originHash" : "f68b3829551b35a5bc088994d02b0e5e719f4a2faa002c14b354bbe86cbd87b5",
+  "originHash" : "5695898d5980ebc493734fa2b7db1ee0835097e4365752a4b2909bfea9bb726b",
   "pins" : [
     {
       "identity" : "photozoomui",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "77b7b93763bae3172f726a2f5df4998641e0c3cb",
         "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "swiftui-reorderable-foreach",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/globulus/swiftui-reorderable-foreach",
+      "state" : {
+        "revision" : "47f6ca1ad906ef2ae1f872ed34a10cc615ad99ca",
+        "version" : "1.0.0"
       }
     },
     {

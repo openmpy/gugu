@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9D04E0442F62D28A00B47B4D /* PhotoZoomUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0432F62D28A00B47B4D /* PhotoZoomUI */; };
 		9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0462F62D4B100B47B4D /* Zoomable */; };
+		9D04E04B2F630E1D00B47B4D /* SwiftUIReorderableForEach in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E04A2F630E1D00B47B4D /* SwiftUIReorderableForEach */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D04E04B2F630E1D00B47B4D /* SwiftUIReorderableForEach in Frameworks */,
 				9D04E0442F62D28A00B47B4D /* PhotoZoomUI in Frameworks */,
 				9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */,
 			);
@@ -73,6 +75,7 @@
 			packageProductDependencies = (
 				9D04E0432F62D28A00B47B4D /* PhotoZoomUI */,
 				9D04E0462F62D4B100B47B4D /* Zoomable */,
+				9D04E04A2F630E1D00B47B4D /* SwiftUIReorderableForEach */,
 			);
 			productName = gugu;
 			productReference = 9D04DFF72F5FF32E00B47B4D /* gugu.app */;
@@ -105,6 +108,7 @@
 			packageReferences = (
 				9D04E0422F62D28A00B47B4D /* XCRemoteSwiftPackageReference "PhotoZoomUI" */,
 				9D04E0452F62D4B100B47B4D /* XCRemoteSwiftPackageReference "Zoomable" */,
+				9D04E0492F630E1D00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9D04DFF82F5FF32E00B47B4D /* Products */;
@@ -375,6 +379,14 @@
 				kind = branch;
 			};
 		};
+		9D04E0492F630E1D00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/globulus/swiftui-reorderable-foreach";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -387,6 +399,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9D04E0452F62D4B100B47B4D /* XCRemoteSwiftPackageReference "Zoomable" */;
 			productName = Zoomable;
+		};
+		9D04E04A2F630E1D00B47B4D /* SwiftUIReorderableForEach */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9D04E0492F630E1D00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */;
+			productName = SwiftUIReorderableForEach;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

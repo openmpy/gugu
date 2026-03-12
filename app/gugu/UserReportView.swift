@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import SwiftUIReorderableForEach
 
 struct UserReportView: View {
     enum ReportReason: String, CaseIterable, Identifiable {
@@ -14,6 +15,7 @@ struct UserReportView: View {
     
     @State private var selectedReason: ReportReason?
     @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var allowReordering = true
     @State private var images: [UIImage] = []
     @State private var detailText = ""
     
@@ -54,33 +56,37 @@ struct UserReportView: View {
                     Text("증거 자료 (최대 5장)")
                         .font(.headline)
                     
-                    ScrollView(.horizontal) {
+                    ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 6) {
-                            ForEach(images.indices, id: \.self) { index in
-                                ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: images[index])
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 80, height: 80)
-                                        .clipped()
-                                        .cornerRadius(12)
-                                    
-                                    Button {
-                                        images.remove(at: index)
-                                    } label: {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .symbolRenderingMode(.palette)
-                                            .foregroundStyle(.white, .red)
-                                    }
-                                    .offset(x: -5, y: 5)
-                                }
+                            ReorderableForEach($images, allowReordering: $allowReordering) { image, isDragging in
+                                let index = images.firstIndex(of: image) ?? 0
+                                
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 80, height: 80)
+                                    .clipped()
+                                    .cornerRadius(12)
+                                    .opacity(isDragging ? 0.7 : 1.0)
+                                    .overlay(
+                                        Button {
+                                            images.remove(at: index)
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .symbolRenderingMode(.palette)
+                                                .foregroundStyle(.white, .red)
+                                        }
+                                            .padding(5),
+                                        alignment: .topTrailing
+                                    )
                             }
                             
                             if images.count < 5 {
                                 PhotosPicker(
                                     selection: $selectedItems,
                                     maxSelectionCount: 5 - images.count,
-                                    matching: .images
+                                    matching: .images,
+                                    photoLibrary: .shared()
                                 ) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 12)
@@ -94,8 +100,12 @@ struct UserReportView: View {
                                 }
                             }
                         }
-                        .padding(.bottom)
                     }
+                    
+                    Text("이미지를 드래그하여 순서를 변경할 수 있습니다.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .padding(.bottom)
                 }
                 
                 VStack(alignment: .leading) {
