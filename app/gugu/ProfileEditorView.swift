@@ -1,8 +1,8 @@
 import SwiftUI
 import PhotosUI
+import SwiftUIReorderableForEach
 
 struct ProfileEditorView: View {
-    
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var secretSelectedItems: [PhotosPickerItem] = []
     
@@ -13,7 +13,7 @@ struct ProfileEditorView: View {
     @State private var birthYear: String = ""
     @State private var bio: String = ""
     
-    @State private var draggingIndex: Int?
+    @State private var allowReordering = true
     
     var body: some View {
         ScrollView {
@@ -130,54 +130,43 @@ struct ProfileEditorView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
-                    ForEach(images.wrappedValue.indices, id: \.self) { index in
-                        ZStack(alignment: .topTrailing) {
-                            Image(uiImage: images.wrappedValue[index])
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 80, height: 80)
-                                .clipped()
-                                .cornerRadius(12)
-                            
-                            if showBadge && index == 0 {
-                                VStack {
-                                    HStack {
-                                        Text("대표")
-                                            .font(.caption2)
-                                            .bold()
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 3)
-                                            .background(Color.blue)
-                                            .foregroundColor(.white)
-                                            .cornerRadius(6)
-                                        
-                                        Spacer()
-                                    }
-                                    Spacer()
+                    ReorderableForEach(images, allowReordering: $allowReordering) { image, isDragging in
+                        let index = images.wrappedValue.firstIndex(of: image) ?? 0
+                        
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 80, height: 80)
+                            .clipped()
+                            .cornerRadius(12)
+                            .opacity(isDragging ? 0.7 : 1.0)
+                            .overlay(
+                                Button {
+                                    images.wrappedValue.remove(at: index)
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(.white, .red)
                                 }
-                                .padding(5)
-                            }
-                            
-                            Button {
-                                images.wrappedValue.remove(at: index)
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(.white, .red)
-                            }
-                            .offset(x: -5, y: 5)
-                        }
-                        
-                        .onDrag {
-                            draggingIndex = index
-                            return NSItemProvider(object: "\(index)" as NSString)
-                        }
-                        
-                        .onDrop(of: [.text], delegate: ImageDropDelegate(
-                            currentIndex: index,
-                            images: images,
-                            draggingIndex: $draggingIndex
-                        ))
+                                    .padding(5),
+                                alignment: .topTrailing
+                            )
+                            .overlay(
+                                AnyView(
+                                    showBadge && index == 0 ?
+                                    Text("대표")
+                                        .font(.caption2)
+                                        .bold()
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 3)
+                                        .background(Color.blue)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(6)
+                                        .padding(5)
+                                    : nil
+                                ),
+                                alignment: .topLeading
+                            )
                     }
                     
                     if images.wrappedValue.count < 10 {
@@ -235,34 +224,6 @@ struct ProfileEditorView: View {
             from: nil,
             for: nil
         )
-    }
-}
-
-struct ImageDropDelegate: DropDelegate {
-    
-    let currentIndex: Int
-    @Binding var images: [UIImage]
-    @Binding var draggingIndex: Int?
-    
-    func dropEntered(info: DropInfo) {
-        guard let from = draggingIndex else { return }
-        let to = currentIndex
-        
-        if from != to {
-            withAnimation {
-                images.move(
-                    fromOffsets: IndexSet(integer: from),
-                    toOffset: to > from ? to + 1 : to
-                )
-            }
-            
-            draggingIndex = to
-        }
-    }
-    
-    func performDrop(info: DropInfo) -> Bool {
-        draggingIndex = nil
-        return true
     }
 }
 

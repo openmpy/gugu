@@ -14,10 +14,11 @@ struct UserReportView: View {
     }
     
     @State private var selectedReason: ReportReason?
-    @State private var selectedItems: [PhotosPickerItem] = []
-    @State private var allowReordering = true
-    @State private var images: [UIImage] = []
     @State private var detailText = ""
+    
+    @State private var allowReordering = true
+    @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var images: [UIImage] = []
     
     var body: some View {
         ScrollView {

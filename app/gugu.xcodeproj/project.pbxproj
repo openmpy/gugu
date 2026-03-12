@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D04E0442F62D28A00B47B4D /* PhotoZoomUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0432F62D28A00B47B4D /* PhotoZoomUI */; };
 		9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0462F62D4B100B47B4D /* Zoomable */; };
-		9D04E04B2F630E1D00B47B4D /* SwiftUIReorderableForEach in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E04A2F630E1D00B47B4D /* SwiftUIReorderableForEach */; };
+		9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,9 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D04E04B2F630E1D00B47B4D /* SwiftUIReorderableForEach in Frameworks */,
-				9D04E0442F62D28A00B47B4D /* PhotoZoomUI in Frameworks */,
 				9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */,
+				9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,9 +71,8 @@
 			);
 			name = gugu;
 			packageProductDependencies = (
-				9D04E0432F62D28A00B47B4D /* PhotoZoomUI */,
 				9D04E0462F62D4B100B47B4D /* Zoomable */,
-				9D04E04A2F630E1D00B47B4D /* SwiftUIReorderableForEach */,
+				9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */,
 			);
 			productName = gugu;
 			productReference = 9D04DFF72F5FF32E00B47B4D /* gugu.app */;
@@ -106,9 +103,8 @@
 			mainGroup = 9D04DFEE2F5FF32E00B47B4D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				9D04E0422F62D28A00B47B4D /* XCRemoteSwiftPackageReference "PhotoZoomUI" */,
 				9D04E0452F62D4B100B47B4D /* XCRemoteSwiftPackageReference "Zoomable" */,
-				9D04E0492F630E1D00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */,
+				9D04E0512F6324AD00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9D04DFF82F5FF32E00B47B4D /* Products */;
@@ -363,14 +359,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9D04E0422F62D28A00B47B4D /* XCRemoteSwiftPackageReference "PhotoZoomUI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Ryu0118/PhotoZoomUI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
-		};
 		9D04E0452F62D4B100B47B4D /* XCRemoteSwiftPackageReference "Zoomable" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ryohey/Zoomable.git";
@@ -379,7 +367,7 @@
 				kind = branch;
 			};
 		};
-		9D04E0492F630E1D00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */ = {
+		9D04E0512F6324AD00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/globulus/swiftui-reorderable-foreach";
 			requirement = {
@@ -390,19 +378,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9D04E0432F62D28A00B47B4D /* PhotoZoomUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9D04E0422F62D28A00B47B4D /* XCRemoteSwiftPackageReference "PhotoZoomUI" */;
-			productName = PhotoZoomUI;
-		};
 		9D04E0462F62D4B100B47B4D /* Zoomable */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9D04E0452F62D4B100B47B4D /* XCRemoteSwiftPackageReference "Zoomable" */;
 			productName = Zoomable;
 		};
-		9D04E04A2F630E1D00B47B4D /* SwiftUIReorderableForEach */ = {
+		9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9D04E0492F630E1D00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */;
+			package = 9D04E0512F6324AD00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */;
 			productName = SwiftUIReorderableForEach;
 		};
 /* End XCSwiftPackageProductDependency section */

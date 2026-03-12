@@ -1,15 +1,6 @@
 {
-  "originHash" : "5695898d5980ebc493734fa2b7db1ee0835097e4365752a4b2909bfea9bb726b",
+  "originHash" : "01339a0113f1d6c099bcb88a5f70259129377e9cbeb0bc81a2c2c675e30af53d",
   "pins" : [
-    {
-      "identity" : "photozoomui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ryu0118/PhotoZoomUI",
-      "state" : {
-        "revision" : "77b7b93763bae3172f726a2f5df4998641e0c3cb",
-        "version" : "0.1.0"
-      }
-    },
     {
       "identity" : "swiftui-reorderable-foreach",
       "kind" : "remoteSourceControl",
