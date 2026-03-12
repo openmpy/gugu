@@ -1,8 +1,7 @@
 import SwiftUI
 
 struct SettingView: View {
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-    
+    @Environment(\.colorScheme) var colorScheme
     @State private var showSheet: Bool = false
     
     struct SettingItem: Identifiable {
@@ -10,21 +9,31 @@ struct SettingView: View {
         let title: String
         let icon: String
         let color: Color
+        let type: ItemType
+        
+        enum ItemType {
+            case view(AnyView)
+            case link(String)
+        }
     }
     
-    let items: [SettingItem] = [
-        .init(title: "내 프로필", icon: "person.crop.circle.fill", color: .blue),
-        .init(title: "하트 목록", icon: "heart.fill", color: .red),
-        .init(title: "비밀 사진 목록", icon: "photo.fill", color: .green),
-        .init(title: "차단 목록", icon: "nosign", color: .red),
-        .init(title: "포인트", icon: "star.circle.fill", color: .yellow),
-        .init(title: "출석 체크", icon: "calendar.circle.fill", color: .orange),
-        .init(title: "광고 보상", icon: "gift.fill", color: .pink),
-        .init(title: "공지사항", icon: "megaphone.fill", color: .teal),
-        .init(title: "문의사항", icon: "envelope.fill", color: .indigo),
-        .init(title: "서비스 이용약관", icon: "doc.text.fill", color: .gray),
-        .init(title: "개인정보 취급방침", icon: "shield.fill", color: .green)
-    ]
+    var items: [SettingItem] {
+        [
+            .init(title: "내 프로필", icon: "person.crop.circle.fill", color: .blue, type: .view(AnyView(HeartListView()))),
+            .init(title: "하트 목록", icon: "heart.fill", color: .red, type: .view(AnyView(HeartListView()))),
+            .init(title: "비밀 사진 목록", icon: "photo.fill", color: .green, type: .view(AnyView(SecretPhotoListView()))),
+            .init(title: "차단 목록", icon: "nosign", color: .red, type: .view(AnyView(BlockListView()))),
+            
+                .init(title: "포인트", icon: "star.circle.fill", color: .yellow, type: .view(AnyView(PointView()))),
+            .init(title: "출석 체크", icon: "calendar.circle.fill", color: .orange, type: .view(AnyView(EmptyView()))),
+            .init(title: "광고 보상", icon: "gift.fill", color: .pink, type: .view(AnyView(EmptyView()))),
+            
+                .init(title: "공지사항", icon: "megaphone.fill", color: .teal, type: .link("https://example.com/notice")),
+            .init(title: "문의사항", icon: "envelope.fill", color: .indigo, type: .link(makeMailURL())),
+            .init(title: "서비스 이용약관", icon: "doc.text.fill", color: .gray, type: .link("https://example.com/terms")),
+            .init(title: "개인정보 취급방침", icon: "shield.fill", color: .green, type: .link("https://example.com/privacy"))
+        ]
+    }
     
     var body: some View {
         NavigationStack {
@@ -51,55 +60,113 @@ struct SettingView: View {
                     } label: {
                         Image(systemName: "ellipsis")
                     }
-                    .actionSheet(isPresented: $showSheet) {
-                        ActionSheet(
-                            title: Text(""),
-                            buttons: [
-                                .destructive(Text("탈퇴하기")) {},
-                                .cancel()
-                            ]
-                        )
+                    .confirmationDialog("설정", isPresented: $showSheet) {
+                        Button("탈퇴하기", role: .destructive) {}
                     }
                 }
+            }
+        }
+    }
+    
+    func makeMailURL() -> String {
+        let userID = "12345"
+        let device = deviceIdentifier()
+        let iosVersion = UIDevice.current.systemVersion
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let body = """
+        
+        
+        --------------------
+        ID: \(userID)
+        기기: \(device)
+        iOS 버전: \(iosVersion)
+        앱 버전: \(appVersion)
+        --------------------
+        """
+        
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = "gugu.kor.cs@gmail.com"
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: "문의하기"),
+            URLQueryItem(name: "body", value: body)
+        ]
+        
+        return components.url?.absoluteString ?? ""
+    }
+    
+    func deviceIdentifier() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        
+        return withUnsafePointer(to: &systemInfo.machine) {
+            $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+                String(cString: $0)
             }
         }
     }
 }
 
 struct SectionView: View {
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.openURL) var openURL
     
     let items: [SettingView.SettingItem]
     
     var body: some View {
         VStack(spacing: 0) {
             ForEach(items) { item in
-                HStack(spacing: 15) {
-                    Image(systemName: item.icon)
-                        .font(.system(size: 25))
-                        .foregroundColor(item.color)
-                        .frame(width: 35, height: 35)
-                    
-                    Text(item.title)
-                        .foregroundColor(.primary)
-                        .font(.system(size: 18, weight: .medium))
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.gray)
+                Group {
+                    switch item.type {
+                        
+                    case .view(let destination):
+                        NavigationLink(destination: destination) {
+                            row(item)
+                        }
+                        .navigationLinkIndicatorVisibility(.hidden)
+                        
+                    case .link(let url):
+                        Button {
+                            if let url = URL(string: url) {
+                                openURL(url)
+                            }
+                        } label: {
+                            row(item)
+                        }
+                    }
                 }
-                .padding(.vertical, 12)
-                .padding(.horizontal)
-                .background(colorScheme == .light ? Color(.systemBackground): Color(.systemGray6))
+                .background(
+                    colorScheme == .light
+                    ? Color(.systemBackground)
+                    : Color(.systemGray6)
+                )
                 
-                // 항목 사이 구분선
                 if item.id != items.last?.id {
                     Divider()
                 }
             }
         }
         .cornerRadius(12)
+        .padding(.horizontal)
+    }
+    
+    func row(_ item: SettingView.SettingItem) -> some View {
+        HStack(spacing: 15) {
+            Image(systemName: item.icon)
+                .font(.system(size: 25))
+                .foregroundColor(item.color)
+                .frame(width: 35, height: 35)
+            
+            Text(item.title)
+                .foregroundColor(.primary)
+                .font(.system(size: 18, weight: .medium))
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .foregroundColor(.gray)
+        }
+        .padding(.vertical, 12)
         .padding(.horizontal)
     }
 }
