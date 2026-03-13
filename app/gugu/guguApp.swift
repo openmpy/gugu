@@ -1,17 +1,19 @@
-//
-//  guguApp.swift
-//  gugu
-//
-//  Created by suhwan on 3/10/26.
-//
-
 import SwiftUI
 
 @main
 struct guguApp: App {
+    
+    @StateObject var auth = AuthState()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if auth.isLoggedIn {
+                ContentView()
+                    .environmentObject(auth)
+            } else {
+                LoginView()
+                    .environmentObject(auth)
+            }
         }
     }
 }

@@ -10,12 +10,11 @@
 		9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0462F62D4B100B47B4D /* Zoomable */; };
 		9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */; };
 		9D04E0562F63892C00B47B4D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0552F63892C00B47B4D /* Kingfisher */; };
-		9D04E05D2F63C0EA00B47B4D /* .swiftlint.yml in Sources */ = {isa = PBXBuildFile; fileRef = 9D04E05C2F63C0E800B47B4D /* .swiftlint.yml */; };
+		9D04E0742F63FF8400B47B4D /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0732F63FF8400B47B4D /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9D04DFF72F5FF32E00B47B4D /* gugu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gugu.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9D04E05C2F63C0E800B47B4D /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +31,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D04E0562F63892C00B47B4D /* Kingfisher in Frameworks */,
+				9D04E0742F63FF8400B47B4D /* Alamofire in Frameworks */,
 				9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */,
 				9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */,
 			);
@@ -45,7 +45,6 @@
 			children = (
 				9D04DFF92F5FF32E00B47B4D /* gugu */,
 				9D04DFF82F5FF32E00B47B4D /* Products */,
-				9D04E05C2F63C0E800B47B4D /* .swiftlint.yml */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,7 +65,6 @@
 			buildPhases = (
 				9D04DFF32F5FF32E00B47B4D /* Sources */,
 				9D04DFF42F5FF32E00B47B4D /* Frameworks */,
-				9D04E05B2F63C06700B47B4D /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -80,6 +78,7 @@
 				9D04E0462F62D4B100B47B4D /* Zoomable */,
 				9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */,
 				9D04E0552F63892C00B47B4D /* Kingfisher */,
+				9D04E0732F63FF8400B47B4D /* Alamofire */,
 			);
 			productName = gugu;
 			productReference = 9D04DFF72F5FF32E00B47B4D /* gugu.app */;
@@ -113,6 +112,7 @@
 				9D04E0452F62D4B100B47B4D /* XCRemoteSwiftPackageReference "Zoomable" */,
 				9D04E0512F6324AD00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */,
 				9D04E0542F63892C00B47B4D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				9D04E0722F63FF8400B47B4D /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9D04DFF82F5FF32E00B47B4D /* Products */;
@@ -124,32 +124,11 @@
 		};
 /* End PBXProject section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		9D04E05B2F63C06700B47B4D /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		9D04DFF32F5FF32E00B47B4D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D04E05D2F63C0EA00B47B4D /* .swiftlint.yml in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,7 +288,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -355,7 +334,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -412,6 +391,14 @@
 				minimumVersion = 8.8.0;
 			};
 		};
+		9D04E0722F63FF8400B47B4D /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.11.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -429,6 +416,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9D04E0542F63892C00B47B4D /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		9D04E0732F63FF8400B47B4D /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9D04E0722F63FF8400B47B4D /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
