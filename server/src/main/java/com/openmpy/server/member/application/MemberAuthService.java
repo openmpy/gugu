@@ -46,7 +46,7 @@ public class MemberAuthService {
         final MemberPhone phone = new MemberPhone(request.phone());
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey(PHONE_KEY + phone.getValue()))) {
-            throw new IllegalArgumentException("인증 번호가 이미 전송되었습니다.");
+            throw new CustomException("인증 번호가 이미 전송되었습니다.");
         }
 
         final String key = PHONE_KEY + phone.getValue();
@@ -62,13 +62,13 @@ public class MemberAuthService {
         final String savedCode = redisTemplate.opsForValue().get(key);
 
         if (savedCode == null) {
-            throw new IllegalArgumentException("인증 번호가 존재하지 않습니다.");
+            throw new CustomException("인증 번호가 존재하지 않습니다.");
         }
         if (!savedCode.equals(request.code())) {
-            throw new IllegalArgumentException("인증 번호가 일치하지 않습니다.");
+            throw new CustomException("인증 번호가 일치하지 않습니다.");
         }
         if (memberRepository.existsByPhone_Value(request.phone())) {
-            throw new IllegalArgumentException("이미 가입된 휴대폰 번호입니다.");
+            throw new CustomException("이미 가입된 휴대폰 번호입니다.");
         }
 
         final String password = passwordEncoder.encode(request.password());
@@ -105,7 +105,7 @@ public class MemberAuthService {
     @Transactional
     public void activate(final Long memberId, final MemberActivateRequest request) {
         if (memberRepository.existsByNickname_Value(request.nickname())) {
-            throw new IllegalArgumentException("이미 가입된 닉네임입니다.");
+            throw new CustomException("이미 가입된 닉네임입니다.");
         }
 
         final Member member = getMember(memberId);
@@ -165,7 +165,7 @@ public class MemberAuthService {
         final String memberId = redisTemplate.opsForValue().get(key);
 
         if (memberId == null) {
-            throw new IllegalArgumentException("회원 ID 값을 찾을 수 없습니다.");
+            throw new CustomException("회원 ID 값을 찾을 수 없습니다.");
         }
 
         return Long.valueOf(memberId);
