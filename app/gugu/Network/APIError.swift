@@ -4,6 +4,7 @@ enum APIError: Error {
     case server(message: String)
     case decoding
     case network
+    case token
     case unknown
 }
 
@@ -16,6 +17,8 @@ extension APIError: LocalizedError {
             return "데이터 처리 오류"
         case .network:
             return "네트워크 오류"
+        case .token:
+            return "토큰 오류"
         case .unknown:
             return "알 수 없는 오류"
         }

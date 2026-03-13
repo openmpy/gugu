@@ -5,6 +5,8 @@ class SignupService {
     
     static let shared = SignupService()
     
+    let session = Session(interceptor: AuthInterceptor())
+    
     private init() {}
     
     func sendCode(
@@ -64,6 +66,40 @@ class SignupService {
                 } else {
                     completion(.failure(.decoding))
                 }
+                
+            case .failure:
+                if let data = response.data,
+                   let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+                    completion(.failure(.server(message: errorResponse.message)))
+                } else if response.error?.isSessionTaskError == true {
+                    completion(.failure(.network))
+                } else {
+                    completion(.failure(.unknown))
+                }
+            }
+        }
+    }
+    
+    func activate(
+        nickname: String,
+        birthYear: Int,
+        bio: String,
+        completion: @escaping (Result<Void, APIError>) -> Void
+    ) {
+        let url = "http://192.168.0.14:8080/api/v1/members/activate"
+        let params = SignupActivateRequest(nickname: nickname, birthYear: birthYear, bio: bio)
+        
+        session.request(
+            url,
+            method: .put,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
+        )
+        .validate()
+        .responseData { response in
+            switch response.result {
+            case .success:
+                completion(.success(()))
                 
             case .failure:
                 if let data = response.data,

@@ -29,6 +29,7 @@ struct SignupVerifyView: View {
     
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var showNextView = false
     
     private var isSubmit: Bool {
         isSendVerifyCode && !code.isEmpty && !password.isEmpty && !selectedGender.rawValue.isEmpty
@@ -128,7 +129,6 @@ struct SignupVerifyView: View {
                             .foregroundStyle(.red)
                     }
                     .padding(.bottom)
-                    
                 }
                 .padding()
             }
@@ -172,6 +172,9 @@ struct SignupVerifyView: View {
         } message: {
             Text(alertMessage)
         }
+        .fullScreenCover(isPresented: $showNextView) {
+            SignupActivateView()
+        }
     }
     
     func sendCode() {
@@ -205,8 +208,8 @@ struct SignupVerifyView: View {
             switch result {
             case .success(let data):
                 DispatchQueue.main.async {
-                    print(data.accessToken, data.refreshToken)
-                    print("화면 이동")
+                    showNextView = true
+                    saveToken(accessToken: data.accessToken, refreshToken: data.refreshToken)
                 }
                 
             case .failure(let error):
