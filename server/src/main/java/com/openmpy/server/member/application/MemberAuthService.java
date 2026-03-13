@@ -88,10 +88,10 @@ public class MemberAuthService {
     @Transactional(readOnly = true)
     public MemberLoginResponse login(final MemberLoginRequest request) {
         final Member member = memberRepository.findByPhone(new MemberPhone(request.phone()))
-            .orElseThrow(() -> new CustomException("가입되지 않은 휴대폰 번호입니다."));
+            .orElseThrow(() -> new CustomException("휴대폰 또는 비밀번호가 일치하지 않습니다."));
 
         if (!passwordEncoder.matches(request.password(), member.getPassword())) {
-            throw new CustomException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException("휴대폰 또는 비밀번호가 일치하지 않습니다.");
         }
 
         final String accessToken = jwtService.generateAccessToken(member.getId());
