@@ -222,7 +222,7 @@ struct ChatDetailView: View {
                         }
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 26, height: 26)
+                        .frame(width: 27, height: 27)
                         .background(Color(.systemGray3))
                         .clipShape(Circle())
                 }
