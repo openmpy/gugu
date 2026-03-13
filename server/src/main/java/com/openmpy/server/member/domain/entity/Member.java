@@ -15,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,11 +70,23 @@ public class Member {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public static Member create(final String phone, final String password) {
+    public static Member create(
+        final String phone,
+        final String password,
+        final MemberGender gender
+    ) {
+        final String randomNickname = UUID.randomUUID()
+            .toString()
+            .replace("-", "")
+            .substring(0, 10);
+
         return Member.builder()
             .phone(new MemberPhone(phone))
             .password(password)
-            .status(MemberStatus.PENDING)
+            .nickname(new MemberNickname(randomNickname))
+            .birthYear(new MemberBirthYear(2000))
+            .gender(gender)
+            .status(MemberStatus.ACTIVE)
             .createdAt(LocalDateTime.now())
             .build();
     }

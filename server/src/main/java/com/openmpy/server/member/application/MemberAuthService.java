@@ -43,11 +43,13 @@ public class MemberAuthService {
 
     @Transactional(readOnly = true)
     public void sendCode(final MemberSendCodeRequest request) {
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(PHONE_KEY + request.phone()))) {
+        final MemberPhone phone = new MemberPhone(request.phone());
+
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(PHONE_KEY + phone.getValue()))) {
             throw new IllegalArgumentException("인증 번호가 이미 전송되었습니다.");
         }
 
-        final String key = PHONE_KEY + request.phone();
+        final String key = PHONE_KEY + phone.getValue();
         final String code = generateCode();
 
         redisTemplate.opsForValue().set(key, code, Duration.ofMinutes(CODE_EXPIRE_MINUTES));
@@ -70,7 +72,7 @@ public class MemberAuthService {
         }
 
         final String password = passwordEncoder.encode(request.password());
-        final Member member = Member.create(request.phone(), password);
+        final Member member = Member.create(request.phone(), password, request.gender());
 
         memberRepository.save(member);
 
