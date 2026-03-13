@@ -28,6 +28,7 @@ struct LoginView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color(.systemGray4), lineWidth: 1)
                         )
+                        .keyboardType(.numberPad)
                         .submitLabel(.done)
                 }
                 .padding(.bottom)
@@ -45,6 +46,13 @@ struct LoginView: View {
                         )
                         .textContentType(.password)
                         .submitLabel(.done)
+                }
+                .padding(.bottom)
+                
+                VStack(alignment: .center) {
+                    NavigationLink(destination: SignupVerifyView()) {
+                        Text("회원가입")
+                    }
                 }
                 .padding(.bottom)
                 
@@ -81,13 +89,16 @@ struct LoginView: View {
         LoginService.shared.login(phone: phone, password: password) { result in
             switch result {
             case .success(let data):
-                saveToken(accessToken: data.accessToken, refreshToken: data.refreshToken)
                 DispatchQueue.main.async {
                     auth.isLoggedIn = true
+                    saveToken(accessToken: data.accessToken, refreshToken: data.refreshToken)
                 }
+                
             case .failure(let error):
-                showAlert = true
-                alertMessage = error.localizedDescription
+                DispatchQueue.main.async {
+                    showAlert = true
+                    alertMessage = error.localizedDescription
+                }
             }
         }
     }
