@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 struct ChatView: View {
     enum Status: String, CaseIterable, Identifiable {
@@ -79,39 +80,24 @@ struct ChatView: View {
     func chatRow(i: Int) -> some View {
         HStack(alignment: .center) {
             if i.isMultiple(of: 2) {
-                AsyncImage(url: URL(string: "https://picsum.photos/100")) { phase in
-                    switch phase {
-                    case .empty:
+                KFImage(URL(string: "https://picsum.photos/\(i)")!)
+                    .placeholder {
                         ProgressView()
-                            .frame(width: 58, height: 58)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 58, height: 58)
-                            .clipShape(Circle())
-                    case .failure:
-                        Image(systemName: "photo")
-                            .resizable()
-                            .scaledToFit()
-                            .padding(15)
-                            .frame(width: 58, height: 58)
-                    @unknown default:
-                        EmptyView()
                     }
-                }
-                .background(Color(.systemGray3))
-                .foregroundColor(Color(.systemGray5))
-                .clipShape(Circle())
-                .padding(.trailing, 5)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 58, height: 58)
+                    .background(Color(.systemGray3))
+                    .clipShape(Circle())
+                    .padding(.trailing, 5)
             } else {
                 Image(systemName: "person.fill")
                     .resizable()
                     .scaledToFit()
                     .padding(15)
                     .frame(width: 58, height: 58)
-                    .background(Color(.systemGray3))
                     .foregroundColor(Color(.systemGray5))
+                    .background(Color(.systemGray3))
                     .clipShape(Circle())
                     .padding(.trailing, 5)
             }

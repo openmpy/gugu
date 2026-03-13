@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 struct UserSearchView: View {
     @State private var searchText: String = ""
@@ -11,31 +12,16 @@ struct UserSearchView: View {
                         NavigationLink(destination: UserDetailView(id: i)) {
                             HStack(alignment: .center) {
                                 if i.isMultiple(of: 2) {
-                                    AsyncImage(url: URL(string: "https://picsum.photos/100")) { phase in
-                                        switch phase {
-                                        case .empty:
+                                    KFImage(URL(string: "https://picsum.photos/\(i)")!)
+                                        .placeholder {
                                             ProgressView()
-                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                        case .failure:
-                                            Image(systemName: "photo")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .padding(15)
-                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                        @unknown default:
-                                            EmptyView()
                                         }
-                                    }
-                                    .frame(width: 58, height: 58)
-                                    .foregroundStyle(Color(red: 219/255, green: 234/255, blue: 254/255))
-                                    .background(Color(red: 120/255, green: 150/255, blue: 240/255))
-                                    .clipShape(Circle())
-                                    .padding(.trailing, 5)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 58, height: 58)
+                                        .background(Color(.systemGray3))
+                                        .clipShape(Circle())
+                                        .padding(.trailing, 5)
                                 } else {
                                     Image(systemName: "person.fill")
                                         .resizable()

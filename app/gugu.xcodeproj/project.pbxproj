@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0462F62D4B100B47B4D /* Zoomable */; };
 		9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */; };
+		9D04E0562F63892C00B47B4D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0552F63892C00B47B4D /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D04E0562F63892C00B47B4D /* Kingfisher in Frameworks */,
 				9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */,
 				9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */,
 			);
@@ -73,6 +75,7 @@
 			packageProductDependencies = (
 				9D04E0462F62D4B100B47B4D /* Zoomable */,
 				9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */,
+				9D04E0552F63892C00B47B4D /* Kingfisher */,
 			);
 			productName = gugu;
 			productReference = 9D04DFF72F5FF32E00B47B4D /* gugu.app */;
@@ -105,6 +108,7 @@
 			packageReferences = (
 				9D04E0452F62D4B100B47B4D /* XCRemoteSwiftPackageReference "Zoomable" */,
 				9D04E0512F6324AD00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */,
+				9D04E0542F63892C00B47B4D /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9D04DFF82F5FF32E00B47B4D /* Products */;
@@ -375,6 +379,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		9D04E0542F63892C00B47B4D /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -387,6 +399,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9D04E0512F6324AD00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */;
 			productName = SwiftUIReorderableForEach;
+		};
+		9D04E0552F63892C00B47B4D /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9D04E0542F63892C00B47B4D /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
