@@ -90,8 +90,7 @@ struct LoginView: View {
             switch result {
             case .success(let data):
                 DispatchQueue.main.async {
-                    auth.isLoggedIn = true
-                    saveToken(accessToken: data.accessToken, refreshToken: data.refreshToken)
+                    auth.login(accessToken: data.accessToken, refreshToken: data.refreshToken)
                 }
                 
             case .failure(let error):
@@ -101,11 +100,6 @@ struct LoginView: View {
                 }
             }
         }
-    }
-    
-    func saveToken(accessToken: String, refreshToken: String) {
-        KeychainHelper.save(key: "accessToken", value: accessToken)
-        KeychainHelper.save(key: "refreshToken", value: refreshToken)
     }
 }
 

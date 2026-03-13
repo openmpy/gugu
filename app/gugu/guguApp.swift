@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct guguApp: App {
     
-    @StateObject var auth = AuthState()
+    @StateObject private var auth = AuthState.shared
     
     var body: some Scene {
         WindowGroup {
