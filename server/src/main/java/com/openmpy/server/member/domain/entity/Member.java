@@ -94,12 +94,10 @@ public class Member {
     public void activate(
         final String nickname,
         final Integer birthYear,
-        final MemberGender gender,
         final String bio
     ) {
         this.nickname = new MemberNickname(nickname);
         this.birthYear = new MemberBirthYear(birthYear);
-        this.gender = gender;
         this.status = MemberStatus.ACTIVE;
         this.bio = bio;
         this.updatedAt = LocalDateTime.now();
