@@ -3,13 +3,17 @@ package com.openmpy.server.member.application;
 import static com.openmpy.server.auth.application.JwtService.BLACKLIST_ACCESS_TOKEN_KEY;
 
 import com.openmpy.server.auth.application.JwtService;
+import com.openmpy.server.global.exception.CustomException;
 import com.openmpy.server.global.properties.JwtProperties;
 import com.openmpy.server.member.domain.entity.Member;
+import com.openmpy.server.member.domain.vo.MemberPhone;
 import com.openmpy.server.member.dto.request.MemberActivateRequest;
 import com.openmpy.server.member.dto.request.MemberDeleteRequest;
+import com.openmpy.server.member.dto.request.MemberLoginRequest;
 import com.openmpy.server.member.dto.request.MemberRotateTokenRequest;
 import com.openmpy.server.member.dto.request.MemberSendCodeRequest;
 import com.openmpy.server.member.dto.request.MemberVerifyCodeRequest;
+import com.openmpy.server.member.dto.response.MemberLoginResponse;
 import com.openmpy.server.member.dto.response.MemberRotateTokenResponse;
 import com.openmpy.server.member.dto.response.MemberVerifyCodeResponse;
 import com.openmpy.server.member.repository.MemberRepository;
@@ -77,6 +81,23 @@ public class MemberAuthService {
         redisTemplate.delete(key);
 
         return new MemberVerifyCodeResponse(accessToken, refreshToken);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberLoginResponse login(final MemberLoginRequest request) {
+        final Member member = memberRepository.findByPhone(new MemberPhone(request.phone()))
+            .orElseThrow(() -> new CustomException("가입되지 않은 휴대폰 번호입니다."));
+
+        if (!passwordEncoder.matches(request.password(), member.getPassword())) {
+            throw new CustomException("비밀번호가 일치하지 않습니다.");
+        }
+
+        final String accessToken = jwtService.generateAccessToken(member.getId());
+        final String refreshToken = jwtService.generateRefreshToken();
+
+        saveRefreshTokenToRedis(refreshToken, member.getId());
+
+        return new MemberLoginResponse(accessToken, refreshToken);
     }
 
     @Transactional

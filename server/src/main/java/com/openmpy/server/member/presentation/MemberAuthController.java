@@ -4,9 +4,11 @@ import com.openmpy.server.auth.annotation.Login;
 import com.openmpy.server.member.application.MemberAuthService;
 import com.openmpy.server.member.dto.request.MemberActivateRequest;
 import com.openmpy.server.member.dto.request.MemberDeleteRequest;
+import com.openmpy.server.member.dto.request.MemberLoginRequest;
 import com.openmpy.server.member.dto.request.MemberRotateTokenRequest;
 import com.openmpy.server.member.dto.request.MemberSendCodeRequest;
 import com.openmpy.server.member.dto.request.MemberVerifyCodeRequest;
+import com.openmpy.server.member.dto.response.MemberLoginResponse;
 import com.openmpy.server.member.dto.response.MemberRotateTokenResponse;
 import com.openmpy.server.member.dto.response.MemberVerifyCodeResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,14 @@ public class MemberAuthController {
         @RequestBody final MemberVerifyCodeRequest request
     ) {
         final MemberVerifyCodeResponse response = memberAuthService.verifyCode(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/v1/members/login")
+    public ResponseEntity<MemberLoginResponse> login(
+        @RequestBody final MemberLoginRequest request
+    ) {
+        final MemberLoginResponse response = memberAuthService.login(request);
         return ResponseEntity.ok(response);
     }
 
