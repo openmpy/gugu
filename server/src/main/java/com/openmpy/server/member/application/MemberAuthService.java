@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,8 @@ public class MemberAuthService {
 
     private final JwtProperties jwtProperties;
     private final JwtService jwtService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public void sendCode(final MemberSendCodeRequest request) {
@@ -62,7 +65,8 @@ public class MemberAuthService {
             throw new IllegalArgumentException("이미 가입된 휴대폰 번호입니다.");
         }
 
-        final Member member = Member.create(request.phone());
+        final String password = passwordEncoder.encode(request.password());
+        final Member member = Member.create(request.phone(), password);
 
         memberRepository.save(member);
 

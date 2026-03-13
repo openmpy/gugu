@@ -38,6 +38,9 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "phone", nullable = false, unique = true))
     private MemberPhone phone;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "nickname", unique = true))
     private MemberNickname nickname;
@@ -66,9 +69,10 @@ public class Member {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public static Member create(final String phone) {
+    public static Member create(final String phone, final String password) {
         return Member.builder()
             .phone(new MemberPhone(phone))
+            .password(password)
             .status(MemberStatus.PENDING)
             .createdAt(LocalDateTime.now())
             .build();
