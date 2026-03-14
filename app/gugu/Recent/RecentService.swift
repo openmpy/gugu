@@ -42,12 +42,14 @@ class RecentService {
     }
     
     func getComments(
+        gender: String,
         cursorId: Int64?,
         completion: @escaping (Result<CursorResponse<RecentGetCommentResponse>, APIError>) -> Void
     ) {
         let url = "http://192.168.0.14:8080/api/v1/members/comments"
         
         var params: Parameters = [
+            "gender": gender,
             "size": 15
         ]
         if let cursorId = cursorId {

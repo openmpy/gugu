@@ -2,7 +2,10 @@ import SwiftUI
 
 struct RecentView: View {
     enum Gender: String, CaseIterable, Identifiable {
-        case all, male, female
+        case all = "ALL"
+        case male = "MALE"
+        case female = "FEMALE"
+        
         var id: Self { self }
     }
     
@@ -34,6 +37,9 @@ struct RecentView: View {
                 .padding(.horizontal)
                 .padding(.top)
                 .padding(.bottom, 5)
+                .onChange(of: selectedGender) { _, newGender in
+                    refreshComments()
+                }
                 
                 ScrollView {
                     LazyVStack(alignment: .leading) {
@@ -127,7 +133,10 @@ struct RecentView: View {
 
         isLoading = true
 
-        RecentService.shared.getComments(cursorId: cursorId) { result in
+        RecentService.shared.getComments(
+            gender: selectedGender.rawValue,
+            cursorId: cursorId
+        ) { result in
             DispatchQueue.main.async {
                 isLoading = false
 
