@@ -3,6 +3,7 @@ package com.openmpy.server.member.domain.entity;
 import com.openmpy.server.member.domain.constants.MemberGender;
 import com.openmpy.server.member.domain.constants.MemberStatus;
 import com.openmpy.server.member.domain.vo.MemberBirthYear;
+import com.openmpy.server.member.domain.vo.MemberComment;
 import com.openmpy.server.member.domain.vo.MemberNickname;
 import com.openmpy.server.member.domain.vo.MemberPhone;
 import jakarta.persistence.AttributeOverride;
@@ -27,7 +28,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("status IN ('PENDING', 'ACTIVE')")
+@SQLRestriction("status = 'ACTIVE'")
 @Entity
 public class Member {
 
@@ -56,6 +57,10 @@ public class Member {
 
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "comment"))
+    private MemberComment comment;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -112,6 +117,11 @@ public class Member {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void writeComment(final String comment) {
+        this.comment = new MemberComment(comment);
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public void delete() {
         if (this.status == MemberStatus.DELETED) {
             throw new IllegalArgumentException("이미 삭제된 계정입니다.");
@@ -131,5 +141,9 @@ public class Member {
 
     public Integer getBirthYear() {
         return birthYear.getValue();
+    }
+
+    public String getComment() {
+        return comment.getValue();
     }
 }

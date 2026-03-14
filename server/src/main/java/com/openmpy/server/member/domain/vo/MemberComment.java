@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
-public class MemberCommentContent {
+public class MemberComment {
 
     private static final int COMMENT_MAX_LENGTH = 100;
 
     private String value;
 
-    public MemberCommentContent(final String value) {
+    public MemberComment(final String value) {
         validateBlank(value);
         validateLength(value);
 
