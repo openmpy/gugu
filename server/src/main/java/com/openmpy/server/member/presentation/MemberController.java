@@ -34,11 +34,13 @@ public class MemberController {
     @GetMapping("/v1/members/comments")
     public ResponseEntity<CursorResponse<MemberGetCommentResponse>> getComments(
         @Login final Long memberId,
+        @RequestParam(value = "gender", defaultValue = "ALL") final String gender,
         @RequestParam(value = "cursorId", required = false) final Long cursorId,
         @RequestParam(value = "size", defaultValue = "15") final int size
     ) {
         final CursorResponse<MemberGetCommentResponse> response = memberService.getComments(
             memberId,
+            gender,
             cursorId,
             size
         );

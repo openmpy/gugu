@@ -1,5 +1,6 @@
 package com.openmpy.server.member.repository;
 
+import com.openmpy.server.member.domain.constants.MemberGender;
 import com.openmpy.server.member.domain.entity.Member;
 import com.openmpy.server.member.domain.vo.MemberPhone;
 import java.util.List;
@@ -28,6 +29,24 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     )
     List<Member> findAllByIdWithCursor(
         final Long id,
+        final Long cursorId,
+        final Pageable pageable
+    );
+
+    @Query(
+        value = """
+                SELECT m
+                FROM Member m
+                WHERE m.id <> :id
+                  AND m.gender = :gender
+                  AND m.comment IS NOT NULL
+                  AND (:cursorId IS NULL OR m.id < :cursorId)
+                ORDER BY m.updatedAt DESC
+            """
+    )
+    List<Member> findAllByIdAndGenderWithCursor(
+        final Long id,
+        final MemberGender gender,
         final Long cursorId,
         final Pageable pageable
     );
