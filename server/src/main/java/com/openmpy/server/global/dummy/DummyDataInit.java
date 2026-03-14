@@ -23,25 +23,27 @@ public class DummyDataInit {
         final MemberRepository memberRepository
     ) {
         return _ -> {
-            final List<Member> members = new ArrayList<>();
+            if (memberRepository.count() == 0) {
+                final List<Member> members = new ArrayList<>();
 
-            for (int i = 0; i < 100; i++) {
-                final String phone = String.format("01000000%03d", i);
+                for (int i = 0; i < 100; i++) {
+                    final String phone = String.format("01000000%03d", i);
 
-                final Member member = Member.create(
-                    phone,
-                    "1234",
-                    i % 2 == 0 ? MALE : FEMALE
-                );
+                    final Member member = Member.create(
+                        phone,
+                        "1234",
+                        i % 2 == 0 ? MALE : FEMALE
+                    );
 
-                member.writeComment("코멘트" + i);
-                member.update("닉네임" + i, 2000);
+                    member.writeComment("코멘트" + i);
+                    member.update("닉네임" + i, 2000);
 
-                members.add(member);
+                    members.add(member);
+                }
+
+                memberRepository.saveAll(members);
+                log.info("{}개의 회원 데이터가 저장되었습니다", memberRepository.count());
             }
-
-            memberRepository.saveAll(members);
-            log.info("{}개의 회원 데이터가 저장되었습니다", memberRepository.count());
         };
     }
 }

@@ -61,4 +61,11 @@ public class MemberService {
             hasNext
         );
     }
+
+    @Transactional
+    public void bumpComment(final Long memberId) {
+        final Member member = memberRepository.getReferenceById(memberId);
+
+        member.bumpComment();
+    }
 }

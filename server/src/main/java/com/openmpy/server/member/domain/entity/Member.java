@@ -32,6 +32,8 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 public class Member {
 
+    private static final String DEFAULT_BUMP_MESSAGE = "반갑습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -119,6 +121,14 @@ public class Member {
 
     public void writeComment(final String comment) {
         this.comment = new MemberComment(comment);
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void bumpComment() {
+        if (this.comment == null) {
+            this.comment = new MemberComment(DEFAULT_BUMP_MESSAGE);
+        }
+
         this.updatedAt = LocalDateTime.now();
     }
 
