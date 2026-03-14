@@ -5,6 +5,7 @@ import com.openmpy.server.member.domain.entity.Member;
 import com.openmpy.server.member.dto.request.MemberWriteCommentRequest;
 import com.openmpy.server.member.dto.response.MemberGetCommentResponse;
 import com.openmpy.server.member.repository.MemberRepository;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +43,11 @@ public class MemberService {
         final List<MemberGetCommentResponse> commentResponses = pageMembers.stream()
             .map(it -> new MemberGetCommentResponse(
                 it.getId(),
+                it.getNickname(),
+                it.getGender(),
+                LocalDate.now().getYear() - it.getBirthYear(),
+                100,
+                25.12,
                 it.getComment(),
                 it.getUpdatedAt()
             ))

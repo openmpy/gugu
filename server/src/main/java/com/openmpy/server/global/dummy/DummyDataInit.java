@@ -35,6 +35,8 @@ public class DummyDataInit {
                 );
 
                 member.writeComment("코멘트" + i);
+                member.update("닉네임" + i, 2000);
+
                 members.add(member);
             }
 
