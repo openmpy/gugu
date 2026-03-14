@@ -89,6 +89,7 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
         
         let url = "http://192.168.0.14:8080/api/v1/members/token"
         let params = AuthTokenRequest(accessToken: accessToken, refreshToken: refreshToken)
+        print(params)
         
         AF.request(
             url,

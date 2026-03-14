@@ -8,6 +8,7 @@ import com.openmpy.server.member.dto.request.MemberUpdateLocationRequest;
 import com.openmpy.server.member.dto.request.MemberWriteCommentRequest;
 import com.openmpy.server.member.dto.response.MemberGetCommentResponse;
 import com.openmpy.server.member.dto.response.MemberGetLocationResponse;
+import com.openmpy.server.member.dto.response.MemberSearchCommentResponse;
 import com.openmpy.server.member.repository.MemberRepository;
 import com.openmpy.server.member.repository.projection.MemberGetCommentProjection;
 import com.openmpy.server.member.repository.projection.MemberGetLocationProjection;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +40,7 @@ public class MemberService {
         final Long memberId,
         final String gender,
         final Long cursorId,
-        final Integer size
+        final int size
     ) {
         final Member member = memberRepository.getReferenceById(memberId);
 
@@ -77,7 +79,7 @@ public class MemberService {
         final Long memberId,
         final String gender,
         final Long cursorId,
-        final Integer size
+        final int size
     ) {
         final Member member = memberRepository.getReferenceById(memberId);
 
@@ -137,5 +139,39 @@ public class MemberService {
         );
 
         member.updateLocation(point);
+    }
+
+    @Transactional(readOnly = true)
+    public CursorResponse<MemberSearchCommentResponse> searchNickname(
+        final Long memberId,
+        final String keyword,
+        final Long cursorId,
+        final int size
+    ) {
+        final List<Member> members = memberRepository.findByNicknameStartingWithAndIdNot(
+            keyword,
+            memberId,
+            cursorId,
+            PageRequest.of(0, size + 1)
+        );
+        final List<MemberSearchCommentResponse> searchResponses = members.stream()
+            .map(it -> new MemberSearchCommentResponse(
+                it.getId(),
+                it.getNickname(),
+                it.getGender(),
+                LocalDate.now().getYear() - it.getBirthYear(),
+                it.getComment(),
+                it.getUpdatedAt()
+            ))
+            .toList();
+
+        final boolean hasNext = members.size() > size;
+        final Long nextCursorId = hasNext ? members.getLast().getId() : null;
+
+        return new CursorResponse<>(
+            searchResponses,
+            nextCursorId,
+            hasNext
+        );
     }
 }

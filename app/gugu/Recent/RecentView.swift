@@ -77,7 +77,7 @@ struct RecentView: View {
                         Image(systemName: "magnifyingglass")
                     }
                     .navigationDestination(isPresented: $goUserSearch) {
-                        UserSearchView()
+                        RecentSearchView()
                     }
                 }
                 

@@ -20,8 +20,6 @@ struct LocationView: View {
     @State private var hasNext: Bool = true
     @State private var isLoading: Bool = false
     
-    @State private var goUserSearch: Bool = false
-    
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
@@ -65,18 +63,6 @@ struct LocationView: View {
                 }
                 .navigationTitle("거리")
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            goUserSearch = true
-                        } label: {
-                            Image(systemName: "magnifyingglass")
-                        }
-                        .navigationDestination(isPresented: $goUserSearch) {
-                            UserSearchView()
-                        }
-                    }
-                }
                 .alert("알림", isPresented: $showAlert) {
                     Button("닫기", role: .cancel) { }
                 } message: {

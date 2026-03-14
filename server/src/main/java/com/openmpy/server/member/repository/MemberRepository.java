@@ -7,6 +7,7 @@ import com.openmpy.server.member.repository.projection.MemberGetLocationProjecti
 import java.util.List;
 import java.util.Optional;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +19,25 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByPhone_Value(final String value);
 
     boolean existsByNickname_Value(final String value);
+
+    @Query(
+        value = """
+            SELECT *
+            FROM member m
+            WHERE m.id <> :id
+              AND m.comment IS NOT NULL
+              AND (:cursorId IS NULL OR m.id < :cursorId)
+              AND m.nickname ILIKE CONCAT(:keyword, '%')
+            ORDER BY m.updated_at DESC
+            """,
+        nativeQuery = true
+    )
+    List<Member> findByNicknameStartingWithAndIdNot(
+        final String keyword,
+        final Long id,
+        final Long cursorId,
+        final Pageable pageable
+    );
 
     @Query(
         value = """

@@ -1,9 +1,8 @@
 import SwiftUI
 import Kingfisher
 
-struct RecentCommentRow: View {
-    
-    let item: RecentGetCommentResponse
+struct RecentSearchCommentRow: View {
+    let item: RecentSearchCommentResponse
     
     var body: some View {
         HStack {
@@ -41,14 +40,6 @@ struct RecentCommentRow: View {
                     Text(item.gender == "MALE" ? "남자" : "여자")
                     Text("·")
                     Text("\(item.age)살")
-                    Text("·")
-                    Text("♥ \(item.heartCount)")
-                    
-                    Spacer()
-                    
-                    if let distance = item.distance {
-                        Text(String(format: "%.1fkm", distance))
-                    }
                 }
                 .font(.footnote)
                 .foregroundColor(.secondary)
