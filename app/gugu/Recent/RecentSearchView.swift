@@ -3,8 +3,6 @@ import Kingfisher
 
 struct RecentSearchView: View {
     
-    @FocusState private var isSearchFieldFocused: Bool
-    
     @State private var searchText: String = ""
     
     @State private var comments: [RecentSearchCommentResponse] = []
@@ -36,7 +34,6 @@ struct RecentSearchView: View {
                     placement: .navigationBarDrawer(displayMode: .always),
                     prompt: "닉네임을 입력해주세요"
                 )
-                .focused($isSearchFieldFocused)
                 .onChange(of: searchText) { _, _ in
                     cursorId = nil
                     hasNext = true
