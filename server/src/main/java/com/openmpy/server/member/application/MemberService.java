@@ -1,21 +1,19 @@
 package com.openmpy.server.member.application;
 
 import com.openmpy.server.global.dto.CursorResponse;
-import com.openmpy.server.global.exception.CustomException;
 import com.openmpy.server.member.domain.constants.MemberGender;
 import com.openmpy.server.member.domain.entity.Member;
 import com.openmpy.server.member.dto.request.MemberUpdateLocationRequest;
 import com.openmpy.server.member.dto.request.MemberWriteCommentRequest;
 import com.openmpy.server.member.dto.response.MemberGetCommentResponse;
 import com.openmpy.server.member.repository.MemberRepository;
-import com.openmpy.server.member.repository.projection.MemberWithDistanceProjection;
+import com.openmpy.server.member.repository.projection.MemberGetCommentProjection;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,99 +37,34 @@ public class MemberService {
         final Long cursorId,
         final Integer size
     ) {
-        final String upperGender = gender.toUpperCase();
-
-        if (!upperGender.equals("ALL") &&
-            !upperGender.equals("MALE") &&
-            !upperGender.equals("FEMALE")
-        ) {
-            throw new CustomException("성별이 올바르지 않습니다.");
-        }
-
         final Member member = memberRepository.getReferenceById(memberId);
 
-        // 위치 O
-        if (member.getLocation() != null) {
-            final List<MemberWithDistanceProjection> members;
-
-            if (upperGender.equals("ALL")) {
-                members = memberRepository.findAllByIdWithDistance(
-                    memberId,
-                    member.getLocation(),
-                    cursorId,
-                    PageRequest.of(0, size + 1)
-                );
-            } else {
-                members = memberRepository.findAllByIdAndGenderWithDistance(
-                    memberId,
-                    member.getLocation(),
-                    upperGender,
-                    cursorId,
-                    PageRequest.of(0, size + 1)
-                );
-            }
-
-            final boolean hasNext = members.size() > size;
-            final List<MemberWithDistanceProjection> pageMembers =
-                hasNext ? members.subList(0, size) : members;
-
-            final List<MemberGetCommentResponse> commentResponses = pageMembers.stream()
-                .map(it -> new MemberGetCommentResponse(
-                    it.getId(),
-                    it.getNickname(),
-                    it.getGender(),
-                    LocalDate.now().getYear() - it.getBirthYear(),
-                    100,
-                    it.getDistance(),
-                    it.getComment(),
-                    it.getUpdatedAt()
-                ))
-                .toList();
-
-            return new CursorResponse<>(
-                commentResponses,
-                hasNext ? pageMembers.getLast().getId() : null,
-                hasNext
-            );
-        }
-
-        // 위치 X
-        final List<Member> members;
-
-        if (upperGender.equals("ALL")) {
-            members = memberRepository.findAllByIdWithoutDistance(
-                memberId,
-                cursorId,
-                PageRequest.of(0, size + 1)
-            );
-        } else {
-            members = memberRepository.findAllByIdAndGenderWithoutDistance(
-                memberId,
-                MemberGender.valueOf(upperGender),
-                cursorId,
-                PageRequest.of(0, size + 1)
-            );
-        }
-
-        final boolean hasNext = members.size() > size;
-        final List<Member> pageMembers = hasNext ? members.subList(0, size) : members;
-
-        final List<MemberGetCommentResponse> commentResponses = pageMembers.stream()
+        final List<MemberGetCommentProjection> members = memberRepository.findMembersWithDistance(
+            memberId,
+            gender.toUpperCase(),
+            member.getLocation(),
+            cursorId,
+            size + 1
+        );
+        final List<MemberGetCommentResponse> commentResponses = members.stream()
             .map(it -> new MemberGetCommentResponse(
-                it.getId(),
-                it.getNickname(),
-                it.getGender(),
-                LocalDate.now().getYear() - it.getBirthYear(),
+                it.memberId(),
+                it.nickname(),
+                MemberGender.valueOf(it.gender()),
+                LocalDate.now().getYear() - it.birthYear(),
                 100,
-                null,
-                it.getComment(),
-                it.getUpdatedAt()
+                it.distance(),
+                it.comment(),
+                it.updatedAt()
             ))
             .toList();
 
+        final boolean hasNext = members.size() > size;
+        final Long nextCursorId = hasNext ? members.getLast().memberId() : null;
+
         return new CursorResponse<>(
             commentResponses,
-            hasNext ? pageMembers.getLast().getId() : null,
+            nextCursorId,
             hasNext
         );
     }
