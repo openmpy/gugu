@@ -53,7 +53,8 @@ struct RecentView: View {
                     .padding()
                 }
                 .refreshable {
-                    await refreshComments()
+                    bumpComment()
+                    refreshComments()
                 }
             }
             .navigationTitle("최근")
@@ -104,16 +105,14 @@ struct RecentView: View {
     
     func writeComment() {
         RecentService.shared.writeComment(comment: comment) { result in
-            switch result {
-            case .success:
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
                     showAlert = true
                     savedComment = comment
                     alertMessage = "코멘트가 작성되었습니다."
-                }
-                
-            case .failure(let error):
-                DispatchQueue.main.async {
+                    
+                case .failure(let error):
                     showAlert = true
                     alertMessage = error.localizedDescription
                 }
@@ -151,10 +150,25 @@ struct RecentView: View {
         }
     }
     
-    func refreshComments() async {
+    func refreshComments() {
         cursorId = nil
         hasNext = true
         loadComments(isRefresh: true)
+    }
+    
+    func bumpComment() {
+        RecentService.shared.bumpComment() { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    break
+
+                case .failure(let error):
+                    showAlert = true
+                    alertMessage = error.localizedDescription
+                }
+            }
+        }
     }
 }
 

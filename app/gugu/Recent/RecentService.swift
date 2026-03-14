@@ -82,4 +82,32 @@ class RecentService {
             }
         }
     }
+    
+    func bumpComment(
+        completion: @escaping (Result<Void, APIError>) -> Void
+    ) {
+        let url = "http://192.168.0.14:8080/api/v1/members/comments/bump"
+        
+        session.request(
+            url,
+            method: .put
+        )
+        .validate()
+        .responseData { response in
+            switch response.result {
+            case .success:
+                completion(.success(()))
+                
+            case .failure:
+                if let data = response.data,
+                   let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+                    completion(.failure(.server(message: errorResponse.message)))
+                } else if response.error?.isSessionTaskError == true {
+                    completion(.failure(.network))
+                } else {
+                    completion(.failure(.unknown))
+                }
+            }
+        }
+    }
 }
