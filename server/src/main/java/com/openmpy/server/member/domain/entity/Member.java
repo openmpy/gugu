@@ -23,6 +23,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
@@ -63,6 +64,9 @@ public class Member {
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "comment"))
     private MemberComment comment;
+
+    @Column(name = "location", columnDefinition = "geography(Point,4326)")
+    private Point location;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -116,6 +120,11 @@ public class Member {
     ) {
         this.nickname = new MemberNickname(nickname);
         this.birthYear = new MemberBirthYear(birthYear);
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateLocation(final Point location) {
+        this.location = location;
         this.updatedAt = LocalDateTime.now();
     }
 

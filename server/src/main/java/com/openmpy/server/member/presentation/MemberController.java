@@ -3,6 +3,7 @@ package com.openmpy.server.member.presentation;
 import com.openmpy.server.auth.annotation.Login;
 import com.openmpy.server.global.dto.CursorResponse;
 import com.openmpy.server.member.application.MemberService;
+import com.openmpy.server.member.dto.request.MemberUpdateLocationRequest;
 import com.openmpy.server.member.dto.request.MemberWriteCommentRequest;
 import com.openmpy.server.member.dto.response.MemberGetCommentResponse;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,15 @@ public class MemberController {
         @Login final Long memberId
     ) {
         memberService.bumpComment(memberId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/v1/members/location")
+    public ResponseEntity<Void> updateLocation(
+        @Login final Long memberId,
+        @RequestBody final MemberUpdateLocationRequest request
+    ) {
+        memberService.updateLocation(memberId, request);
         return ResponseEntity.noContent().build();
     }
 }
