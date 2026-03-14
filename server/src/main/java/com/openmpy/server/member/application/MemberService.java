@@ -1,13 +1,16 @@
 package com.openmpy.server.member.application;
 
 import com.openmpy.server.global.dto.CursorResponse;
+import com.openmpy.server.global.exception.CustomException;
 import com.openmpy.server.member.domain.constants.MemberGender;
 import com.openmpy.server.member.domain.entity.Member;
 import com.openmpy.server.member.dto.request.MemberUpdateLocationRequest;
 import com.openmpy.server.member.dto.request.MemberWriteCommentRequest;
 import com.openmpy.server.member.dto.response.MemberGetCommentResponse;
+import com.openmpy.server.member.dto.response.MemberGetLocationResponse;
 import com.openmpy.server.member.repository.MemberRepository;
 import com.openmpy.server.member.repository.projection.MemberGetCommentProjection;
+import com.openmpy.server.member.repository.projection.MemberGetLocationProjection;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +42,7 @@ public class MemberService {
     ) {
         final Member member = memberRepository.getReferenceById(memberId);
 
-        final List<MemberGetCommentProjection> members = memberRepository.findMembersWithDistance(
+        final List<MemberGetCommentProjection> members = memberRepository.findMembersCommentWithDistance(
             memberId,
             gender.toUpperCase(),
             member.getLocation(),
@@ -64,6 +67,49 @@ public class MemberService {
 
         return new CursorResponse<>(
             commentResponses,
+            nextCursorId,
+            hasNext
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public CursorResponse<MemberGetLocationResponse> getLocations(
+        final Long memberId,
+        final String gender,
+        final Long cursorId,
+        final Integer size
+    ) {
+        final Member member = memberRepository.getReferenceById(memberId);
+
+        if (member.getLocation() == null) {
+            throw new CustomException("위치 값을 찾을 수 없습니다.");
+        }
+
+        final List<MemberGetLocationProjection> members = memberRepository.findMembersLocationWithDistance(
+            memberId,
+            gender.toUpperCase(),
+            member.getLocation(),
+            cursorId,
+            size + 1
+        );
+        final List<MemberGetLocationResponse> locationResponses = members.stream()
+            .map(it -> new MemberGetLocationResponse(
+                it.memberId(),
+                it.nickname(),
+                MemberGender.valueOf(it.gender()),
+                LocalDate.now().getYear() - it.birthYear(),
+                100,
+                it.distance(),
+                it.bio(),
+                it.updatedAt()
+            ))
+            .toList();
+
+        final boolean hasNext = members.size() > size;
+        final Long nextCursorId = hasNext ? members.getLast().memberId() : null;
+
+        return new CursorResponse<>(
+            locationResponses,
             nextCursorId,
             hasNext
         );

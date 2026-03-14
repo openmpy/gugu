@@ -6,6 +6,7 @@ import com.openmpy.server.member.application.MemberService;
 import com.openmpy.server.member.dto.request.MemberUpdateLocationRequest;
 import com.openmpy.server.member.dto.request.MemberWriteCommentRequest;
 import com.openmpy.server.member.dto.response.MemberGetCommentResponse;
+import com.openmpy.server.member.dto.response.MemberGetLocationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,5 +65,22 @@ public class MemberController {
     ) {
         memberService.updateLocation(memberId, request);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/v1/members/locations")
+    public ResponseEntity<CursorResponse<MemberGetLocationResponse>> getLocations(
+        @Login final Long memberId,
+        @RequestParam(value = "gender", defaultValue = "ALL") final String gender,
+        @RequestParam(value = "cursorId", required = false) final Long cursorId,
+        @RequestParam(value = "size", defaultValue = "15") final int size
+    ) {
+        final CursorResponse<MemberGetLocationResponse> response = memberService.getLocations(
+            memberId,
+            gender,
+            cursorId,
+            size
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

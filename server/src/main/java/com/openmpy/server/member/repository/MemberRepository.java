@@ -3,6 +3,7 @@ package com.openmpy.server.member.repository;
 import com.openmpy.server.member.domain.entity.Member;
 import com.openmpy.server.member.domain.vo.MemberPhone;
 import com.openmpy.server.member.repository.projection.MemberGetCommentProjection;
+import com.openmpy.server.member.repository.projection.MemberGetLocationProjection;
 import java.util.List;
 import java.util.Optional;
 import org.locationtech.jts.geom.Point;
@@ -40,7 +41,36 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             """,
         nativeQuery = true
     )
-    List<MemberGetCommentProjection> findMembersWithDistance(
+    List<MemberGetCommentProjection> findMembersCommentWithDistance(
+        @Param("id") final Long id,
+        @Param("gender") final String gender,
+        @Param("location") final Point location,
+        @Param("cursorId") final Long cursorId,
+        @Param("size") final int size
+    );
+
+    @Query(
+        value = """
+                SELECT 
+                    m.id,
+                    m.nickname,
+                    m.gender,
+                    m.birth_year,
+                    ST_Distance(m.location::geography, :location)/1000 AS distance,
+                    m.bio,
+                    m.updated_at
+                FROM member m
+                WHERE m.id <> :id
+                  AND (:gender IS NULL OR :gender = 'ALL' OR m.gender = :gender)
+                  AND (:cursorId IS NULL OR m.id < :cursorId)
+                  AND m.location IS NOT NULL
+                  AND :location IS NOT NULL
+                ORDER BY distance, m.updated_at DESC
+                LIMIT :size
+            """,
+        nativeQuery = true
+    )
+    List<MemberGetLocationProjection> findMembersLocationWithDistance(
         @Param("id") final Long id,
         @Param("gender") final String gender,
         @Param("location") final Point location,
