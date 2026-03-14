@@ -10,11 +10,11 @@ class RecentService {
     private init() {}
     
     func writeComment(
-        content: String,
+        comment: String,
         completion: @escaping (Result<Void, APIError>) -> Void
     ) {
         let url = "http://192.168.0.14:8080/api/v1/members/comments"
-        let params = RecentWriteCommentRequest(content: content)
+        let params = RecentWriteCommentRequest(comment: comment.isEmpty ? "반갑습니다." : comment)
         
         session.request(
             url,

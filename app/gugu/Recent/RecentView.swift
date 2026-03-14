@@ -145,7 +145,7 @@ struct RecentView: View {
     }
     
     func writeComment() {
-        RecentService.shared.writeComment(content: comment) { result in
+        RecentService.shared.writeComment(comment: comment) { result in
             switch result {
             case .success:
                 DispatchQueue.main.async {

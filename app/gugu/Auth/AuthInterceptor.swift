@@ -14,7 +14,9 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
         guard let accessToken = KeychainHelper.read(key: "accessToken") else {
-            AuthState.shared.logout()
+            DispatchQueue.main.async {
+                AuthState.shared.logout()
+            }
             completion(.failure(APIError.token))
             return
         }
@@ -34,6 +36,9 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
         lock.lock(); defer { lock.unlock() }
         
         guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
+            DispatchQueue.main.async {
+                AuthState.shared.logout()
+            }
             completion(.doNotRetry)
             return
         }
@@ -57,12 +62,16 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
     
     private func rotateToken(completion: @escaping (Bool) -> Void) {
         guard let accessToken = KeychainHelper.read(key: "accessToken") else {
-            AuthState.shared.logout()
+            DispatchQueue.main.async {
+                AuthState.shared.logout()
+            }
             completion(false)
             return
         }
         guard let refreshToken = KeychainHelper.read(key: "refreshToken") else {
-            AuthState.shared.logout()
+            DispatchQueue.main.async {
+                AuthState.shared.logout()
+            }
             completion(false)
             return
         }
@@ -81,15 +90,21 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
             switch response.result {
             case .success(let data):
                 if let result = try? JSONDecoder().decode(AuthTokenResponse.self, from: data) {
-                    AuthState.shared.login(accessToken: result.accessToken, refreshToken: result.refreshToken)
+                    DispatchQueue.main.async {
+                        AuthState.shared.login(accessToken: result.accessToken, refreshToken: result.refreshToken)
+                    }
                     completion(true)
                 } else {
-                    AuthState.shared.logout()
+                    DispatchQueue.main.async {
+                        AuthState.shared.logout()
+                    }
                     completion(false)
                 }
                 
             case .failure:
-                AuthState.shared.logout()
+                DispatchQueue.main.async {
+                    AuthState.shared.logout()
+                }
                 completion(false)
             }
         }
