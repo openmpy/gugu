@@ -1,52 +1,20 @@
 import Foundation
 import Alamofire
 
-class RecentService {
+class LocationService {
     
-    static let shared = RecentService()
+    static let shared = LocationService()
     
     let session = Session(interceptor: AuthInterceptor())
     
     private init() {}
     
-    func writeComment(
-        comment: String,
-        completion: @escaping (Result<Void, APIError>) -> Void
-    ) {
-        let url = "http://192.168.0.14:8080/api/v1/members/comments"
-        let params = RecentWriteCommentRequest(comment: comment.isEmpty ? "반갑습니다." : comment)
-        
-        session.request(
-            url,
-            method: .post,
-            parameters: params,
-            encoder: JSONParameterEncoder.default
-        )
-        .validate()
-        .responseData { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-                
-            case .failure:
-                if let data = response.data,
-                   let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-                    completion(.failure(.server(message: errorResponse.message)))
-                } else if response.error?.isSessionTaskError == true {
-                    completion(.failure(.network))
-                } else {
-                    completion(.failure(.unknown))
-                }
-            }
-        }
-    }
-    
-    func getComments(
+    func getLocations(
         gender: String,
         cursorId: Int64?,
-        completion: @escaping (Result<CursorResponse<RecentGetCommentResponse>, APIError>) -> Void
+        completion: @escaping (Result<CursorResponse<LocationGetMemberResponse>, APIError>) -> Void
     ) {
-        let url = "http://192.168.0.14:8080/api/v1/members/comments"
+        let url = "http://192.168.0.14:8080/api/v1/members/locations"
         
         var params: Parameters = [
             "gender": gender,
@@ -63,7 +31,7 @@ class RecentService {
             encoding: URLEncoding.queryString
         )
         .validate()
-        .responseDecodable(of: CursorResponse<RecentGetCommentResponse>.self) { response in
+        .responseDecodable(of: CursorResponse<LocationGetMemberResponse>.self) { response in
             switch response.result {
             case .success(let data):
                 completion(.success(data))
@@ -85,14 +53,19 @@ class RecentService {
         }
     }
     
-    func bumpComment(
+    func updateLocation(
+        latitude: Double?,
+        longitude: Double?,
         completion: @escaping (Result<Void, APIError>) -> Void
     ) {
-        let url = "http://192.168.0.14:8080/api/v1/members/comments/bump"
+        let url = "http://192.168.0.14:8080/api/v1/members/location"
+        let params = LocationUpdateMemberRequest(latitude: latitude, longitude: longitude);
         
         session.request(
             url,
-            method: .put
+            method: .put,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
         )
         .validate()
         .responseData { response in

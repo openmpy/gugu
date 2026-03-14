@@ -1,4 +1,4 @@
-struct RecentUpdateLocationRequest: Codable {
+struct LocationUpdateMemberRequest: Codable {
     let latitude: Double?
     let longitude: Double?
 }

@@ -113,7 +113,7 @@ struct RecentView: View {
         }
         .onChange(of: locationManager.currentLocation) { _, newLocation in
             if let loc = newLocation {
-                RecentService.shared.updateLocation(
+                LocationService.shared.updateLocation(
                     latitude: loc.coordinate.latitude,
                     longitude: loc.coordinate.longitude
                 ) { result in
@@ -128,7 +128,7 @@ struct RecentView: View {
                     }
                 }
             } else {
-                RecentService.shared.updateLocation(latitude: nil, longitude: nil) { result in
+                LocationService.shared.updateLocation(latitude: nil, longitude: nil) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success:
