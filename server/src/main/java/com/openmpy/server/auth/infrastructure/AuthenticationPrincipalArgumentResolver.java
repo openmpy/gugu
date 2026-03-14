@@ -43,7 +43,7 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         if (jwtService.isBlacklisted(accessToken)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         return jwtService.extractMemberId(accessToken);
     }
