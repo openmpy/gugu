@@ -27,7 +27,7 @@ public class MemberController {
         @RequestBody final MemberWriteCommentRequest request
     ) {
         memberService.writeComment(memberId, request);
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/v1/members/comments")
