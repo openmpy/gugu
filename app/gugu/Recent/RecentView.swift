@@ -1,6 +1,8 @@
 import SwiftUI
+import CoreLocation
 
 struct RecentView: View {
+    
     enum Gender: String, CaseIterable, Identifiable {
         case all = "ALL"
         case male = "MALE"
@@ -11,6 +13,8 @@ struct RecentView: View {
     
     @AppStorage("selectedRecentGender") private var selectedGender: Gender = .all
     @AppStorage("recentComment") private var savedComment: String = ""
+    
+    @StateObject private var locationManager = LocationManager()
     
     @State private var comments: [RecentGetCommentResponse] = []
     @State private var cursorId: Int64? = nil
@@ -107,6 +111,36 @@ struct RecentView: View {
                 loadComments()
             }
         }
+        .onChange(of: locationManager.currentLocation) { _, newLocation in
+            if let loc = newLocation {
+                RecentService.shared.updateLocation(
+                    latitude: loc.coordinate.latitude,
+                    longitude: loc.coordinate.longitude
+                ) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success:
+                            break
+                        case .failure(let error):
+                            showAlert = true
+                            alertMessage = error.localizedDescription
+                        }
+                    }
+                }
+            } else {
+                RecentService.shared.updateLocation(latitude: nil, longitude: nil) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success:
+                            break
+                        case .failure(let error):
+                            showAlert = true
+                            alertMessage = error.localizedDescription
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func writeComment() {
@@ -130,16 +164,16 @@ struct RecentView: View {
         if isLoading || !hasNext {
             return
         }
-
+        
         isLoading = true
-
+        
         RecentService.shared.getComments(
             gender: selectedGender.rawValue,
             cursorId: cursorId
         ) { result in
             DispatchQueue.main.async {
                 isLoading = false
-
+                
                 switch result {
                 case .success(let response):
                     if isRefresh {
@@ -147,10 +181,10 @@ struct RecentView: View {
                     } else {
                         comments.append(contentsOf: response.payload)
                     }
-
+                    
                     cursorId = response.nextId
                     hasNext = response.hasNext
-
+                    
                 case .failure(let error):
                     showAlert = true
                     alertMessage = error.localizedDescription
@@ -171,7 +205,7 @@ struct RecentView: View {
                 switch result {
                 case .success:
                     break
-
+                    
                 case .failure(let error):
                     showAlert = true
                     alertMessage = error.localizedDescription

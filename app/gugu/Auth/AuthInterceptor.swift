@@ -98,25 +98,21 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
         )
         .validate()
         .responseData { response in
-            switch response.result {
-            case .success(let data):
-                if let result = try? JSONDecoder().decode(AuthTokenResponse.self, from: data) {
-                    DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                switch response.result {
+                case .success(let data):
+                    if let result = try? JSONDecoder().decode(AuthTokenResponse.self, from: data) {
                         AuthState.shared.login(accessToken: result.accessToken, refreshToken: result.refreshToken)
-                    }
-                    completion(true)
-                } else {
-                    DispatchQueue.main.async {
+                        completion(true)
+                    } else {
                         AuthState.shared.logout()
+                        completion(false)
                     }
+                    
+                case .failure:
+                    AuthState.shared.logout()
                     completion(false)
                 }
-                
-            case .failure:
-                DispatchQueue.main.async {
-                    AuthState.shared.logout()
-                }
-                completion(false)
             }
         }
     }
