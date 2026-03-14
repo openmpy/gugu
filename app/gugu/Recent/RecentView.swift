@@ -1,5 +1,4 @@
 import SwiftUI
-import Kingfisher
 
 struct RecentView: View {
     enum Gender: String, CaseIterable, Identifiable {
@@ -9,6 +8,11 @@ struct RecentView: View {
     
     @AppStorage("selectedRecentGender") private var selectedGender: Gender = .all
     @AppStorage("recentComment") private var savedComment: String = ""
+    
+    @State private var comments: [RecentGetCommentResponse] = []
+    @State private var cursorId: Int64? = nil
+    @State private var hasNext: Bool = true
+    @State private var isLoading: Bool = false
     
     @State private var goUserSearch: Bool = false
     
@@ -33,74 +37,23 @@ struct RecentView: View {
                 
                 ScrollView {
                     LazyVStack(alignment: .leading) {
-                        ForEach(0..<100) { i in
-                            NavigationLink(destination: UserDetailView(id: i)) {
-                                HStack(alignment: .center) {
-                                    if i.isMultiple(of: 2) {
-                                        KFImage(URL(string: "https://picsum.photos/\(i)")!)
-                                            .placeholder {
-                                                ProgressView()
-                                            }
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 58, height: 58)
-                                            .background(Color(.systemGray3))
-                                            .clipShape(Circle())
-                                            .padding(.trailing, 5)
-                                    } else {
-                                        Image(systemName: "person.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .padding(15)
-                                            .frame(width: 58, height: 58)
-                                            .foregroundStyle(Color(red: 252/255, green: 231/255, blue: 243/255))
-                                            .background(Color(red: 255/255, green: 120/255, blue: 160/255))
-                                            .clipShape(Circle())
-                                            .padding(.trailing, 5)
-                                    }
-                                    
-                                    VStack(alignment: .leading) {
-                                        HStack {
-                                            Text("닉네임 \(i)")
-                                                .font(.headline)
-                                                .foregroundColor(i % 2 == 0 ? Color(red: 120/255, green: 150/255, blue: 240/255) : Color(red: 255/255, green: 120/255, blue: 160/255))
-                                            
-                                            Spacer()
-                                            
-                                            Text("방금 전")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        
-                                        Text("안녕하세요 \(i)")
-                                            .font(.subheadline)
-                                            .lineLimit(1)
-                                            .foregroundColor(.secondary)
-                                        
-                                        HStack {
-                                            HStack {
-                                                Text(i % 2 == 0 ? "남자" : "여자")
-                                                Text("·")
-                                                Text("29살")
-                                                Text("·")
-                                                Text("♥ 100")
-                                            }
-                                            
-                                            Spacer()
-                                            
-                                            Text(i % 2 == 0 ? "25.2km" : "")
-                                        }
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
-                                    }
-                                }
-                                .padding(.vertical, 5)
+                        ForEach(comments) { item in
+                            NavigationLink(destination: UserDetailView(id: item.memberId)) {
+                                RecentCommentRow(item: item)
                             }
                             .navigationLinkIndicatorVisibility(.hidden)
+                            .onAppear {
+                                if item.id == comments.last?.id {
+                                    loadComments()
+                                }
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
+                }
+                .refreshable {
+                    await refreshComments()
                 }
             }
             .navigationTitle("최근")
@@ -142,6 +95,11 @@ struct RecentView: View {
                 Text(alertMessage)
             }
         }
+        .onAppear {
+            if comments.isEmpty {
+                loadComments()
+            }
+        }
     }
     
     func writeComment() {
@@ -161,6 +119,42 @@ struct RecentView: View {
                 }
             }
         }
+    }
+    
+    func loadComments(isRefresh: Bool = false) {
+        if isLoading || !hasNext {
+            return
+        }
+
+        isLoading = true
+
+        RecentService.shared.getComments(cursorId: cursorId) { result in
+            DispatchQueue.main.async {
+                isLoading = false
+
+                switch result {
+                case .success(let response):
+                    if isRefresh {
+                        comments = response.payload
+                    } else {
+                        comments.append(contentsOf: response.payload)
+                    }
+
+                    cursorId = response.nextId
+                    hasNext = response.hasNext
+
+                case .failure(let error):
+                    showAlert = true
+                    alertMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+    
+    func refreshComments() async {
+        cursorId = nil
+        hasNext = true
+        loadComments(isRefresh: true)
     }
 }
 

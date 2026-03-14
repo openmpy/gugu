@@ -9,7 +9,7 @@ struct UserSearchView: View {
             VStack {
                 List {
                     ForEach(0..<100) { i in
-                        NavigationLink(destination: UserDetailView(id: i)) {
+                        NavigationLink(destination: UserDetailView(id: Int64(i))) {
                             HStack(alignment: .center) {
                                 if i.isMultiple(of: 2) {
                                     KFImage(URL(string: "https://picsum.photos/\(i)")!)

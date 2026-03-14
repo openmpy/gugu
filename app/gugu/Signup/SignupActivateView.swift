@@ -108,6 +108,11 @@ struct SignupActivateView: View {
                 )
             }
         }
+        .alert("알림", isPresented: $showAlert) {
+            Button("닫기", role: .cancel) { }
+        } message: {
+            Text(alertMessage)
+        }
     }
     
     func imageSection(

@@ -30,7 +30,7 @@ struct LocationView: View {
                     ScrollView {
                         LazyVStack(alignment: .leading) {
                             ForEach(0..<100) { i in
-                                NavigationLink(destination: UserDetailView(id: i)) {
+                                NavigationLink(destination: UserDetailView(id: Int64(i))) {
                                     HStack(alignment: .center) {
                                         if i.isMultiple(of: 2) {
                                             AsyncImage(url: URL(string: "https://picsum.photos/100")) { phase in

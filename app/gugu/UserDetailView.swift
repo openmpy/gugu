@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct UserDetailView: View {
-    let id: Int
+    let id: Int64
     
     private let imageSeeds = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     

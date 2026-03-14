@@ -35,10 +35,21 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
     ) {
         lock.lock(); defer { lock.unlock() }
         
-        guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
+        guard let response = request.task?.response as? HTTPURLResponse else {
+            completion(.doNotRetry)
+            return
+        }
+        
+        
+        if response.statusCode == 403 || response.statusCode == 500 {
             DispatchQueue.main.async {
                 AuthState.shared.logout()
             }
+            completion(.doNotRetry)
+            return
+        }
+        
+        guard response.statusCode == 401 else {
             completion(.doNotRetry)
             return
         }
