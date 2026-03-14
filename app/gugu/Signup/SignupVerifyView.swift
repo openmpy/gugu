@@ -165,7 +165,7 @@ struct SignupVerifyView: View {
         }
         .onAppear {
             showAlert = true
-            alertMessage = "미성년자는 이용할 수 없습니다.\n적발 시 차단될 수 있습니다."
+            alertMessage = "미성년자는 이용할 수 없습니다.\n적발 시 영구 정지 대상입니다."
         }
         .alert("알림", isPresented: $showAlert) {
             Button("닫기", role: .cancel) { }

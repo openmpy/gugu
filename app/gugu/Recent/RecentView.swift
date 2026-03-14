@@ -8,11 +8,15 @@ struct RecentView: View {
     }
     
     @AppStorage("selectedRecentGender") private var selectedGender: Gender = .all
-    @AppStorage("recentContent") private var savedContent: String = ""
+    @AppStorage("recentComment") private var savedComment: String = ""
+    
+    @State private var goUserSearch: Bool = false
+    
+    @State private var showCommentAlert: Bool = false
+    @State private var comment: String = ""
     
     @State private var showAlert: Bool = false
-    @State private var content: String = ""
-    @State private var goUserSearch: Bool = false
+    @State private var alertMessage: String = ""
     
     var body: some View {
         NavigationStack {
@@ -115,21 +119,46 @@ struct RecentView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        showAlert = true
-                        content = savedContent
+                        showCommentAlert = true
+                        comment = savedComment
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }
                 }
             }
-            .alert("한줄 소개", isPresented: $showAlert) {
-                TextField("내용을 입력해주세요", text: $content)
+            .alert("코멘트", isPresented: $showCommentAlert) {
+                TextField("내용을 입력해주세요", text: $comment)
                 
                 Button("작성", role: .confirm) {
-                    savedContent = content
+                    writeComment()
                 }
                 
-                Button("취소", role: .cancel) { }
+                Button("취소", role: .cancel) {
+                }
+            }
+            .alert("알림", isPresented: $showAlert) {
+                Button("닫기", role: .cancel) { }
+            } message: {
+                Text(alertMessage)
+            }
+        }
+    }
+    
+    func writeComment() {
+        RecentService.shared.writeComment(content: comment) { result in
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    showAlert = true
+                    savedComment = comment
+                    alertMessage = "코멘트가 작성되었습니다."
+                }
+                
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    showAlert = true
+                    alertMessage = error.localizedDescription
+                }
             }
         }
     }

@@ -76,12 +76,10 @@ struct LoginView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
         }
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("알림"),
-                message: Text(alertMessage),
-                dismissButton: .default(Text("확인"))
-            )
+        .alert("알림", isPresented: $showAlert) {
+            Button("닫기", role: .cancel) { }
+        } message: {
+            Text(alertMessage)
         }
     }
     

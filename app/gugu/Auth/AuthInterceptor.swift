@@ -72,7 +72,7 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
         
         AF.request(
             url,
-            method: .post,
+            method: .patch,
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
