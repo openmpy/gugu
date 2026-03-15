@@ -1,4 +1,5 @@
-struct RecentSearchCommentResponse: Decodable, Identifiable {
+struct MemberSearchCommentResponse: Decodable, Identifiable {
+    
     let memberId: Int64
     let nickname: String
     let gender: String

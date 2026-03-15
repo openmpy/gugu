@@ -1,0 +1,87 @@
+import Alamofire
+
+final class MemberService {
+    
+    static let shared = MemberService()
+    
+    let session = Session(interceptor: AuthInterceptor())
+    
+    func writeComment(
+        comment: String
+    ) async throws {
+        let url = "http://192.168.0.14:8080/api/v1/members/comments"
+        
+        let params = MemberWriteCommentRequest(
+            comment: comment.isEmpty ? "반갑습니다." : comment
+        )
+        
+        _ = try await session.request(
+            url,
+            method: .post,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
+        )
+        .validate()
+        .serializingData()
+        .value
+    }
+    
+    func getComments(
+        gender: String,
+        cursorId: Int64?,
+    ) async throws -> CursorResponse<MemberGetCommentResponse> {
+        let url = "http://192.168.0.14:8080/api/v1/members/comments"
+        
+        var params: Parameters = [
+            "gender": gender,
+            "size": 15
+        ]
+        if let cursorId = cursorId {
+            params["cursorId"] = cursorId
+        }
+        
+        return try await session.request(
+            url,
+            method: .get,
+            parameters: params.compactMapValues { $0 }
+        )
+        .serializingDecodable(CursorResponse<MemberGetCommentResponse>.self)
+        .value
+    }
+    
+    func bumpComment() async throws {
+        let url = "http://192.168.0.14:8080/api/v1/members/comments/bump"
+        
+        _ = try await session.request(
+            url,
+            method: .put,
+        )
+        .validate()
+        .serializingData()
+        .value
+    }
+    
+    func searchComments(
+        keyword: String,
+        cursorId: Int64?,
+    ) async throws -> CursorResponse<MemberSearchCommentResponse> {
+        let url = "http://192.168.0.14:8080/api/v1/members/comments/search"
+        
+        var params: Parameters = [
+            "keyword": keyword,
+            "size": 15
+        ]
+        if let cursorId = cursorId {
+            params["cursorId"] = cursorId
+        }
+        
+        return try await session.request(
+            url,
+            method: .get,
+            parameters: params,
+            encoding: URLEncoding.queryString
+        )
+        .serializingDecodable(CursorResponse<MemberSearchCommentResponse>.self)
+        .value
+    }
+}

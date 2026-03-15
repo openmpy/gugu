@@ -1,13 +1,16 @@
 import SwiftUI
 import Kingfisher
 
-struct RecentSearchCommentRow: View {
-    let item: RecentSearchCommentResponse
+struct RecentMemberRow: View {
+    
+    let item: MemberGetCommentResponse
     
     var body: some View {
         HStack {
             KFImage(URL(string: "https://picsum.photos/100"))
-                .placeholder { ProgressView() }
+                .placeholder {
+                    ProgressView()
+                }
                 .resizable()
                 .scaledToFill()
                 .frame(width: 58, height: 58)
@@ -40,6 +43,14 @@ struct RecentSearchCommentRow: View {
                     Text(item.gender == "MALE" ? "남자" : "여자")
                     Text("·")
                     Text("\(item.age)살")
+                    Text("·")
+                    Text("♥ \(item.heartCount)")
+                    
+                    Spacer()
+                    
+                    if let distance = item.distance {
+                        Text(String(format: "%.1fkm", distance))
+                    }
                 }
                 .font(.footnote)
                 .foregroundColor(.secondary)
