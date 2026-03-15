@@ -8,7 +8,14 @@ final class LoginViewModel: ObservableObject {
     
     @Published var errorMessage: String?
     
+    @Published var phone: String = ""
+    @Published var password = ""
+    
     @Published var isActivated = false
+    
+    var isSubmit: Bool {
+        !phone.isEmpty && !password.isEmpty
+    }
     
     func login(phone: String, password: String) async {
         do {

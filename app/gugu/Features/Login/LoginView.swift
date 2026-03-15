@@ -6,13 +6,6 @@ struct LoginView: View {
     
     @StateObject private var vm = LoginViewModel()
     
-    @State private var phone: String = ""
-    @State private var password = ""
-    
-    private var isSubmit: Bool {
-        !phone.isEmpty && !password.isEmpty
-    }
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -20,7 +13,7 @@ struct LoginView: View {
                     Text("휴대폰")
                         .font(.headline)
                     
-                    TextField("휴대폰 번호를 입력해주세요", text: $phone)
+                    TextField("휴대폰 번호를 입력해주세요", text: $vm.phone)
                         .padding(.vertical, 10)
                         .padding(.horizontal, 12)
                         .overlay(
@@ -36,7 +29,7 @@ struct LoginView: View {
                     Text("비밀번호")
                         .font(.headline)
                     
-                    SecureField("비밀번호를 입력해주세요", text: $password)
+                    SecureField("비밀번호를 입력해주세요", text: $vm.password)
                         .padding(.vertical, 10)
                         .padding(.horizontal, 12)
                         .overlay(
@@ -59,7 +52,7 @@ struct LoginView: View {
                 
                 Button {
                     Task {
-                        await vm.login(phone: phone, password: password)
+                        await vm.login(phone: vm.phone, password: vm.password)
                     }
                 } label: {
                     Text("로그인")
@@ -67,9 +60,9 @@ struct LoginView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .glassEffect(isSubmit ? .regular.tint(.blue): .regular.tint(.gray))
+                        .glassEffect(vm.isSubmit ? .regular.tint(.blue): .regular.tint(.gray))
                 }
-                .disabled(!isSubmit)
+                .disabled(!vm.isSubmit)
             }
             .padding()
             .navigationTitle("로그인")

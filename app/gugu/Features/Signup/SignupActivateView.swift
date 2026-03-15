@@ -12,10 +12,6 @@ struct SignupActivateView: View {
     @State private var profileImages: [UIImage] = []
     @State private var allowReordering: Bool = true
     
-    @State private var nickname: String = ""
-    @State private var birthYear: String = ""
-    @State private var bio: String = ""
-    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -32,7 +28,7 @@ struct SignupActivateView: View {
                             Text("닉네임")
                                 .font(.headline)
                             
-                            TextField("닉네임을 입력해주세요.", text: $nickname)
+                            TextField("닉네임을 입력해주세요.", text: $vm.nickname)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 12)
                                 .overlay(
@@ -46,7 +42,7 @@ struct SignupActivateView: View {
                             Text("출생연도")
                                 .font(.headline)
                             
-                            TextField("출생연도를 입력해주세요.", text: $birthYear)
+                            TextField("출생연도를 입력해주세요.", text: $vm.birthYear)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 12)
                                 .overlay(
@@ -54,9 +50,9 @@ struct SignupActivateView: View {
                                         .stroke(Color(.systemGray4), lineWidth: 1)
                                 )
                                 .keyboardType(.numberPad)
-                                .onChange(of: birthYear) { _, newValue in
+                                .onChange(of: vm.birthYear) { _, newValue in
                                     if newValue.count > 4 {
-                                        birthYear = String(newValue.prefix(4))
+                                        vm.birthYear = String(newValue.prefix(4))
                                     }
                                 }
                         }
@@ -66,7 +62,7 @@ struct SignupActivateView: View {
                             Text("자기소개")
                                 .font(.headline)
                             
-                            TextEditor(text: $bio)
+                            TextEditor(text: $vm.bio)
                                 .frame(height: 120)
                                 .padding(8)
                                 .overlay(
@@ -81,16 +77,16 @@ struct SignupActivateView: View {
             .safeAreaInset(edge: .bottom) {
                 Button {
                     Task {
-                        await vm.activate(nickname: nickname, birthYear: birthYear, bio: bio)
+                        await vm.activate(nickname: vm.nickname, birthYear: vm.birthYear, bio: vm.bio)
                     }
                 } label: {
                     Text("회원가입")
                         .frame(maxWidth: .infinity)
                         .padding()
                         .foregroundColor(.white)
-                        .glassEffect(nickname.isEmpty || birthYear.isEmpty ? .regular.tint(.gray): .regular.tint(.blue))
+                        .glassEffect(vm.nickname.isEmpty || vm.birthYear.isEmpty ? .regular.tint(.gray): .regular.tint(.blue))
                 }
-                .disabled(nickname.isEmpty || birthYear.isEmpty)
+                .disabled(vm.nickname.isEmpty || vm.birthYear.isEmpty)
                 .padding()
             }
             .navigationTitle("회원가입")
