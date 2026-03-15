@@ -46,8 +46,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                     m.nickname,
                     m.gender,
                     m.birth_year,
-                    CASE WHEN :location IS NOT NULL
-                         THEN ST_Distance(m.location::geography, :location)/1000
+                    CASE WHEN CAST(:location AS geography) IS NOT NULL
+                         THEN ST_Distance(m.location::geography, CAST(:location AS geography)) / 1000
                     END AS distance,
                     m.comment,
                     m.updated_at
@@ -56,7 +56,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                   AND m.comment IS NOT NULL
                   AND (:gender IS NULL OR :gender = 'ALL' OR m.gender = :gender)
                   AND (:cursorId IS NULL OR m.id < :cursorId)
-                ORDER BY m.updated_at DESC, distance
+                ORDER BY m.updated_at DESC
                 LIMIT :size
             """,
         nativeQuery = true
