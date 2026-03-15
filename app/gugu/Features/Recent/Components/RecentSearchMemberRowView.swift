@@ -1,7 +1,7 @@
 import SwiftUI
 import Kingfisher
 
-struct RecentSearchMemberRow: View {
+struct RecentSearchMemberRowView: View {
     
     let item: MemberSearchCommentResponse
     

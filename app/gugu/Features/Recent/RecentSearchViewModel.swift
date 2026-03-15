@@ -9,9 +9,10 @@ final class RecentSearchViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     @Published var comments: [MemberSearchCommentResponse] = []
-    
     @Published var isLoading: Bool = false
     @Published var hasNext: Bool = true
+    
+    @Published var searchNickname: String = ""
     
     private var cursorId: Int64? = nil
     private var keyword: String = ""

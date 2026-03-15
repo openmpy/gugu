@@ -8,7 +8,7 @@ struct RecentSearchMemberItemView: View {
     
     var body: some View {
         NavigationLink(destination: UserDetailView(id: item.memberId)) {
-            RecentSearchMemberRow(item: item)
+            RecentSearchMemberRowView(item: item)
         }
         .navigationLinkIndicatorVisibility(.hidden)
         .onAppear {
