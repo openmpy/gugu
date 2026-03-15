@@ -4,12 +4,14 @@ import Combine
 @MainActor
 final class RecentSearchViewModel: ObservableObject {
     
+    private let service = MemberService.shared
+    
+    @Published var errorMessage: String?
+    
     @Published var comments: [MemberSearchCommentResponse] = []
     
     @Published var isLoading: Bool = false
     @Published var hasNext: Bool = true
-    
-    private let service = MemberService.shared
     
     private var cursorId: Int64? = nil
     private var keyword: String = ""
@@ -40,7 +42,7 @@ final class RecentSearchViewModel: ObservableObject {
             cursorId = response.nextId
             hasNext = response.hasNext
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
     
@@ -62,7 +64,7 @@ final class RecentSearchViewModel: ObservableObject {
             cursorId = response.nextId
             hasNext = response.hasNext
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
 }

@@ -9,7 +9,6 @@ struct guguApp: App {
         WindowGroup {
             if auth.isLoggedIn {
                 ContentView()
-                    .environmentObject(auth)
             } else {
                 LoginView()
                     .environmentObject(auth)

@@ -7,6 +7,7 @@ final class LoginViewModel: ObservableObject {
     private let service = MemberService.shared
     
     @Published var errorMessage: String?
+    
     @Published var isActivated = false
     
     func login(phone: String, password: String) async {

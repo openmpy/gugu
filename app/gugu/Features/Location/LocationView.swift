@@ -8,9 +8,6 @@ struct LocationView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var vm = LocationViewModel()
     
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
-    
     var body: some View {
         NavigationStack {
             if locationManager.isLocationEnabled {
@@ -77,11 +74,6 @@ struct LocationView: View {
                         )
                     }
                 }
-                .alert("알림", isPresented: $showAlert) {
-                    Button("닫기", role: .cancel) { }
-                } message: {
-                    Text(alertMessage)
-                }
             } else {
                 VStack(spacing: 20) {
                     Text("위치 접근 허용이 꺼져 있습니다.")
@@ -107,6 +99,14 @@ struct LocationView: View {
         }
         .onAppear {
             locationManager.requestPermission()
+        }
+        .alert("오류", isPresented: Binding(
+            get: { vm.errorMessage != nil },
+            set: { if !$0 { vm.errorMessage = nil } }
+        )) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text(vm.errorMessage ?? "")
         }
     }
     

@@ -4,12 +4,19 @@ import Combine
 @MainActor
 final class RecentViewModel: ObservableObject {
     
+    private let service = MemberService.shared
+    
+    @AppStorage("recentComment") var savedComment: String = ""
+    
+    @Published var errorMessage: String?
+    
     @Published var comments: [MemberGetCommentResponse] = []
     
     @Published var isLoading: Bool = false
     @Published var hasNext: Bool = true
     
-    private let service = MemberService.shared
+    @Published var showAlert: Bool = false
+    @Published var alertMessage: String?
     
     private var cursorId: Int64? = nil
     
@@ -33,7 +40,7 @@ final class RecentViewModel: ObservableObject {
             cursorId = response.nextId
             hasNext = response.hasNext
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
     
@@ -55,25 +62,28 @@ final class RecentViewModel: ObservableObject {
             cursorId = response.nextId
             hasNext = response.hasNext
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
     
     func writeComment(comment: String) async {
         do {
             try await service.writeComment(comment: comment)
+            
+            savedComment = comment
+            
+            showAlert = true
+            alertMessage = "코멘트가 작성되었습니다."
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
     
     func bumpComment() async {
         do {
             try await service.bumpComment()
-        } catch is CancellationError {
-            return
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
     
@@ -85,5 +95,13 @@ final class RecentViewModel: ObservableObject {
             keyword: keyword,
             cursorId: cursorId
         )
+    }
+    
+    func updateLocation(latitude: Double?, longitude: Double?) async {
+        do {
+            try await service.updateLocation(latitude: latitude, longitude: longitude)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }

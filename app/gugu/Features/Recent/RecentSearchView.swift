@@ -6,9 +6,6 @@ struct RecentSearchView: View {
     
     @State private var searchNickname: String = ""
     
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -38,10 +35,13 @@ struct RecentSearchView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
         }
-        .alert("알림", isPresented: $showAlert) {
-            Button("닫기", role: .cancel) { }
+        .alert("오류", isPresented: Binding(
+            get: { vm.errorMessage != nil },
+            set: { if !$0 { vm.errorMessage = nil } }
+        )) {
+            Button("확인", role: .cancel) {}
         } message: {
-            Text(alertMessage)
+            Text(vm.errorMessage ?? "")
         }
     }
 }

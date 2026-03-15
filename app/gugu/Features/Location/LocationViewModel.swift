@@ -4,12 +4,14 @@ import Combine
 @MainActor
 final class LocationViewModel: ObservableObject {
     
+    private let service = MemberService.shared
+    
+    @Published var errorMessage: String?
+    
     @Published var locations: [MemberGetLocationResponse] = []
     
     @Published var isLoading: Bool = false
     @Published var hasNext: Bool = true
-    
-    private let service = MemberService.shared
     
     private var cursorId: Int64? = nil
     
@@ -34,7 +36,7 @@ final class LocationViewModel: ObservableObject {
             hasNext = response.hasNext
             
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
     
@@ -56,7 +58,7 @@ final class LocationViewModel: ObservableObject {
             cursorId = response.nextId
             hasNext = response.hasNext
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
     
@@ -64,7 +66,7 @@ final class LocationViewModel: ObservableObject {
         do {
             try await service.updateLocation(latitude: latitude, longitude: longitude)
         } catch {
-            print(error)
+            errorMessage = error.localizedDescription
         }
     }
 }

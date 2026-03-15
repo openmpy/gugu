@@ -3,9 +3,9 @@ import Combine
 
 class AuthState: ObservableObject {
     
-    @Published var isLoggedIn: Bool = false
-    
     static let shared = AuthState()
+    
+    @Published var isLoggedIn: Bool = false
     
     init() {
         checkLogin()

@@ -79,20 +79,15 @@ final class MemberService {
         comment: String
     ) async throws {
         let url = "http://192.168.0.14:8080/api/v1/members/comments"
+        let params = MemberWriteCommentRequest(comment: comment)
         
-        let params = MemberWriteCommentRequest(
-            comment: comment.isEmpty ? "반갑습니다." : comment
-        )
-        
-        _ = try await session.request(
+        try await session.request(
             url,
             method: .post,
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
-        .validate()
-        .serializingData()
-        .value
+        .validateWithErrorHandling()
     }
     
     func getComments(
@@ -114,20 +109,17 @@ final class MemberService {
             method: .get,
             parameters: params.compactMapValues { $0 }
         )
-        .serializingDecodable(CursorResponse<MemberGetCommentResponse>.self)
-        .value
+        .decodingWithErrorHandling(CursorResponse<MemberGetCommentResponse>.self)
     }
     
     func bumpComment() async throws {
         let url = "http://192.168.0.14:8080/api/v1/members/comments/bump"
         
-        _ = try await session.request(
+        try await session.request(
             url,
             method: .put,
         )
-        .validate()
-        .serializingData()
-        .value
+        .validateWithErrorHandling()
     }
     
     func searchComments(
@@ -150,8 +142,7 @@ final class MemberService {
             parameters: params,
             encoding: URLEncoding.queryString
         )
-        .serializingDecodable(CursorResponse<MemberSearchCommentResponse>.self)
-        .value
+        .decodingWithErrorHandling(CursorResponse<MemberSearchCommentResponse>.self)
     }
     
     // MARK: 위치
@@ -174,8 +165,7 @@ final class MemberService {
             method: .get,
             parameters: params.compactMapValues { $0 }
         )
-        .serializingDecodable(CursorResponse<MemberGetLocationResponse>.self)
-        .value
+        .decodingWithErrorHandling(CursorResponse<MemberGetLocationResponse>.self)
     }
     
     func updateLocation(
@@ -188,14 +178,12 @@ final class MemberService {
             latitude: latitude, longitude: longitude
         )
         
-        _ = try await session.request(
+        try await session.request(
             url,
             method: .put,
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
-        .validate()
-        .serializingData()
-        .value
+        .validateWithErrorHandling()
     }
 }

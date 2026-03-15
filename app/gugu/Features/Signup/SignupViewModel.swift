@@ -7,12 +7,15 @@ final class SignupViewModel: ObservableObject {
     private let service = MemberService.shared
     
     @Published var errorMessage: String?
+    
     @Published var isSendVerifyCode: Bool = false
     @Published var verifySecond: Int = 180
+    
+    @Published var isActivated = false
     @Published var showNextView = false
+    
     @Published var showAlert: Bool = false
     @Published var alertMessage: String?
-    @Published var isActivated = false
     
     func sendCode(phone: String) async {
         do {

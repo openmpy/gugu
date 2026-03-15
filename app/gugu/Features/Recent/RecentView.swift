@@ -4,11 +4,9 @@ import CoreLocation
 struct RecentView: View {
     
     @AppStorage("selectedRecentGender") private var selectedGender: Gender = .all
-    @AppStorage("recentComment") private var savedComment: String = ""
     
     @StateObject private var locationManager = LocationManager()
     @StateObject private var vm = RecentViewModel()
-    @StateObject private var lvm = LocationViewModel()
     
     @State private var showCommentAlert: Bool = false
     @State private var comment: String = ""
@@ -75,30 +73,11 @@ struct RecentView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showCommentAlert = true
-                        comment = savedComment
+                        comment = vm.savedComment
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }
                 }
-            }
-            .alert("코멘트", isPresented: $showCommentAlert) {
-                TextField("내용을 입력해주세요", text: $comment)
-                
-                Button("작성") {
-                    Task {
-                        await vm.writeComment(comment: comment)
-                        
-                        savedComment = comment
-                        alertMessage = "코멘트가 작성되었습니다."
-                        showAlert = true
-                    }
-                }
-                Button("취소", role: .cancel) { }
-            }
-            .alert("알림", isPresented: $showAlert) {
-                Button("닫기", role: .cancel) { }
-            } message: {
-                Text(alertMessage)
             }
         }
         .task {
@@ -108,11 +87,34 @@ struct RecentView: View {
         }
         .onChange(of: locationManager.currentLocation) { _, newLocation in
             Task {
-                await lvm.updateLocation(
+                await vm.updateLocation(
                     latitude: newLocation?.coordinate.latitude,
                     longitude: newLocation?.coordinate.longitude
                 )
             }
+        }
+        .alert("코멘트", isPresented: $showCommentAlert) {
+            TextField("내용을 입력해주세요", text: $comment)
+            
+            Button("작성") {
+                Task {
+                    await vm.writeComment(comment: comment)
+                }
+            }
+            Button("취소", role: .cancel) { }
+        }
+        .alert("알림", isPresented: $vm.showAlert) {
+            Button("닫기", role: .cancel) { }
+        } message: {
+            Text(vm.alertMessage ?? "")
+        }
+        .alert("오류", isPresented: Binding(
+            get: { vm.errorMessage != nil },
+            set: { if !$0 { vm.errorMessage = nil } }
+        )) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text(vm.errorMessage ?? "")
         }
     }
 }
