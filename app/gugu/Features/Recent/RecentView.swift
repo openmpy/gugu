@@ -22,9 +22,10 @@ struct RecentView: View {
         NavigationStack {
             VStack {
                 Picker("Gender", selection: $selectedGender) {
-                    Text("전체").tag(Gender.all)
-                    Text("여자").tag(Gender.female)
-                    Text("남자").tag(Gender.male)
+                    ForEach(Gender.allCases) { gender in
+                        Text(gender.text)
+                            .tag(gender)
+                    }
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)

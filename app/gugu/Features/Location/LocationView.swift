@@ -16,9 +16,10 @@ struct LocationView: View {
             if locationManager.isLocationEnabled {
                 VStack {
                     Picker("Gender", selection: $selectedGender) {
-                        Text("전체").tag(Gender.all)
-                        Text("여자").tag(Gender.female)
-                        Text("남자").tag(Gender.male)
+                        ForEach(Gender.allCases) { gender in
+                            Text(gender.text)
+                                .tag(gender)
+                        }
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
@@ -53,11 +54,6 @@ struct LocationView: View {
                 }
                 .navigationTitle("거리")
                 .navigationBarTitleDisplayMode(.inline)
-                .alert("알림", isPresented: $showAlert) {
-                    Button("닫기", role: .cancel) { }
-                } message: {
-                    Text(alertMessage)
-                }
                 .task {
                     if vm.locations.isEmpty {
                         await vm.fetchLocations(gender: selectedGender.rawValue)
@@ -80,6 +76,11 @@ struct LocationView: View {
                             longitude: loc.coordinate.longitude
                         )
                     }
+                }
+                .alert("알림", isPresented: $showAlert) {
+                    Button("닫기", role: .cancel) { }
+                } message: {
+                    Text(alertMessage)
                 }
             } else {
                 VStack(spacing: 20) {
