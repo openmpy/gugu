@@ -62,7 +62,10 @@ struct SignupVerifyView: View {
                                         try await vm.sendCode(phone: phone)
                                         
                                         isSendVerifyCode = true
-                                    } catch {
+                                    } catch let apiError as APIError {
+                                        
+                                    }
+                                    catch {
                                         print(error)
                                     }
                                 }

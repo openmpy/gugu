@@ -2,15 +2,10 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @EnvironmentObject var auth: AuthState
-    
     @StateObject private var vm = LoginViewModel()
     
     @State private var phone: String = ""
     @State private var password = ""
-    
-    @State private var showAlert = false
-    @State private var alertMessage = ""
     
     private var isSubmit: Bool {
         !phone.isEmpty && !password.isEmpty
@@ -62,14 +57,7 @@ struct LoginView: View {
                 
                 Button {
                     Task {
-                        do {
-                            let response = try await vm.login(phone: phone, password: password)
-                            
-                            saveToken(accessToken: response.accessToken, refreshToken: response.refreshToken)
-                            auth.isLoggedIn = true
-                        } catch {
-                            print(error)
-                        }
+                        await vm.login(phone: phone, password: password)
                     }
                 } label: {
                     Text("로그인")
@@ -87,10 +75,13 @@ struct LoginView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
         }
-        .alert("알림", isPresented: $showAlert) {
-            Button("닫기", role: .cancel) { }
+        .alert("오류", isPresented: Binding(
+            get: { vm.errorMessage != nil },
+            set: { if !$0 { vm.errorMessage = nil } }
+        )) {
+            Button("확인", role: .cancel) {}
         } message: {
-            Text(alertMessage)
+            Text(vm.errorMessage ?? "")
         }
     }
     

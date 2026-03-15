@@ -20,8 +20,7 @@ final class MemberService {
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
-        .serializingDecodable(MemberLoginResponse.self)
-        .value
+        .decodingWithErrorHandling(MemberLoginResponse.self)
     }
     
     // MARK: 회원가입
