@@ -6,6 +6,24 @@ final class MemberService {
     
     let session = Session(interceptor: AuthInterceptor())
     
+    // MARK: 로그인
+    func login(
+        phone: String,
+        password: String
+    ) async throws -> CursorResponse<MemberLoginResponse> {
+        let url = "http://192.168.0.14:8080/api/v1/members/login"
+        let params = MemberLoginRequest(phone: phone, password: password)
+        
+        return try await AF.request(
+            url,
+            method: .post,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
+        )
+        .serializingDecodable(CursorResponse<MemberLoginResponse>.self)
+        .value
+    }
+    
     // MARK: 코멘트
     func writeComment(
         comment: String

@@ -4,6 +4,8 @@ struct LoginView: View {
     
     @EnvironmentObject var auth: AuthState
     
+    @StateObject private var vm = LoginViewModel()
+    
     @State private var phone: String = ""
     @State private var password = ""
     
@@ -59,7 +61,9 @@ struct LoginView: View {
                 Spacer()
                 
                 Button {
-                    login()
+                    Task {
+                        await vm.login(phone: phone, password: password)
+                    }
                 } label: {
                     Text("로그인")
                         .font(.headline)
@@ -80,23 +84,6 @@ struct LoginView: View {
             Button("닫기", role: .cancel) { }
         } message: {
             Text(alertMessage)
-        }
-    }
-    
-    func login() {
-        LoginService.shared.login(phone: phone, password: password) { result in
-            switch result {
-            case .success(let data):
-                DispatchQueue.main.async {
-                    auth.login(accessToken: data.accessToken, refreshToken: data.refreshToken)
-                }
-                
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    showAlert = true
-                    alertMessage = error.localizedDescription
-                }
-            }
         }
     }
 }
