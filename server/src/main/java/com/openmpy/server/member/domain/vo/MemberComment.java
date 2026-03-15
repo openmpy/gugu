@@ -25,7 +25,7 @@ public class MemberComment {
 
     private void validateBlank(final String value) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("코멘트 내용이 빈 값일 수 없습니다.");
+            throw new IllegalArgumentException("코멘트 내용을 작성해주세요.");
         }
     }
 
