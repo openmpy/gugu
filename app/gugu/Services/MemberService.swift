@@ -30,15 +30,13 @@ final class MemberService {
         let url = "http://192.168.0.14:8080/api/v1/members/phone/send-code"
         let params = MemberSendCodeRequest(phone: phone)
         
-        _ = try await AF.request(
+        try await AF.request(
             url,
             method: .post,
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
-        .validate()
-        .serializingData()
-        .value
+        .validateWithErrorHandling()
     }
     
     func verifyCode(
@@ -56,8 +54,7 @@ final class MemberService {
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
-        .serializingDecodable(MemberVerifyCodeResponse.self)
-        .value
+        .decodingWithErrorHandling(MemberVerifyCodeResponse.self)
     }
     
     func activate(
@@ -68,15 +65,13 @@ final class MemberService {
         let url = "http://192.168.0.14:8080/api/v1/members/activate"
         let params = MemberActivateRequest(nickname: nickname, birthYear: birthYear, bio: bio)
         
-        _ = try await session.request(
+        try await session.request(
             url,
             method: .put,
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
-        .validate()
-        .serializingData()
-        .value
+        .validateWithErrorHandling()
     }
     
     // MARK: 코멘트

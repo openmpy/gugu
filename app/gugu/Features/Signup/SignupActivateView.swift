@@ -10,16 +10,11 @@ struct SignupActivateView: View {
     
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var profileImages: [UIImage] = []
+    @State private var allowReordering: Bool = true
     
     @State private var nickname: String = ""
     @State private var birthYear: String = ""
     @State private var bio: String = ""
-    
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
-    
-    @State private var allowReordering: Bool = true
-    @State private var goLoginView: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -86,21 +81,14 @@ struct SignupActivateView: View {
             .safeAreaInset(edge: .bottom) {
                 Button {
                     Task {
-                        do {
-                            try await vm.activate(nickname: nickname, birthYear: birthYear, bio: bio)
-                            
-                            auth.isLoggedIn = true
-                        } catch {
-                            print(error)
-                        }
+                        await vm.activate(nickname: nickname, birthYear: birthYear, bio: bio)
                     }
                 } label: {
                     Text("회원가입")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(nickname.isEmpty || birthYear.isEmpty ? Color.gray : Color.blue)
                         .foregroundColor(.white)
-                        .cornerRadius(12)
+                        .glassEffect(nickname.isEmpty || birthYear.isEmpty ? .regular.tint(.gray): .regular.tint(.blue))
                 }
                 .disabled(nickname.isEmpty || birthYear.isEmpty)
                 .padding()
@@ -119,10 +107,18 @@ struct SignupActivateView: View {
                 )
             }
         }
-        .alert("알림", isPresented: $showAlert) {
-            Button("닫기", role: .cancel) { }
+        .onChange(of: vm.isActivated) { _, activated in
+            if activated {
+                auth.isLoggedIn = true
+            }
+        }
+        .alert("오류", isPresented: Binding(
+            get: { vm.errorMessage != nil },
+            set: { if !$0 { vm.errorMessage = nil } }
+        )) {
+            Button("확인", role: .cancel) {}
         } message: {
-            Text(alertMessage)
+            Text(vm.errorMessage ?? "")
         }
     }
     

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct LoginView: View {
     
+    @EnvironmentObject var auth: AuthState
+    
     @StateObject private var vm = LoginViewModel()
     
     @State private var phone: String = ""
@@ -65,8 +67,7 @@ struct LoginView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(isSubmit ? Color.blue : Color.gray)
-                        .cornerRadius(12)
+                        .glassEffect(isSubmit ? .regular.tint(.blue): .regular.tint(.gray))
                 }
                 .disabled(!isSubmit)
             }
@@ -74,6 +75,11 @@ struct LoginView: View {
             .navigationTitle("로그인")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
+        }
+        .onChange(of: vm.isActivated) { _, activated in
+            if activated {
+                auth.isLoggedIn = true
+            }
         }
         .alert("오류", isPresented: Binding(
             get: { vm.errorMessage != nil },

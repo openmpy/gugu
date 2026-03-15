@@ -23,4 +23,21 @@ extension DataRequest {
         }
         throw APIError.unknown
     }
+    
+    func validateWithErrorHandling() async throws {
+        let response = await self.serializingData().response
+        
+        guard let statusCode = response.response?.statusCode else {
+            throw APIError.network
+        }
+        
+        if (200..<300).contains(statusCode) {
+            return
+        }
+        
+        if let data = response.data, let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+            throw APIError.server(message: errorResponse.message)
+        }
+        throw APIError.unknown
+    }
 }

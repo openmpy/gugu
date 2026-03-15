@@ -6,16 +6,15 @@ final class LoginViewModel: ObservableObject {
     
     private let service = MemberService.shared
     
-    @EnvironmentObject var auth: AuthState
-    
     @Published var errorMessage: String?
+    @Published var isActivated = false
     
     func login(phone: String, password: String) async {
         do {
             let response = try await service.login(phone: phone, password: password)
             
             saveToken(accessToken: response.accessToken, refreshToken: response.refreshToken)
-            auth.isLoggedIn = true
+            isActivated = true
         } catch {
             errorMessage = error.localizedDescription
         }
