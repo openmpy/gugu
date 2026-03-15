@@ -6,6 +6,8 @@ final class LocationViewModel: ObservableObject {
     
     private let service = MemberService.shared
     
+    @AppStorage("selectedLocationGender") var selectedGender: Gender = .all
+    
     @Published var errorMessage: String?
     
     @Published var locations: [MemberGetLocationResponse] = []

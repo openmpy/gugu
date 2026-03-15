@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreLocation
+import SimpleToast
 
 struct LocationView: View {
     
@@ -8,45 +9,42 @@ struct LocationView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var vm = LocationViewModel()
     
+    private let toastOptions = SimpleToastOptions(hideAfter: 5)
+    
     var body: some View {
         NavigationStack {
             if locationManager.isLocationEnabled {
                 VStack {
-                    Picker("Gender", selection: $selectedGender) {
-                        ForEach(Gender.allCases) { gender in
-                            Text(gender.text)
-                                .tag(gender)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .padding(.bottom, 5)
-                    .onChange(of: selectedGender) { _, newGender in
+                    GenderPickerView(selectedGender: $vm.selectedGender) { _, newGender in
                         Task {
                             await vm.fetchLocations(gender: newGender.rawValue)
                         }
                     }
                     
-                    ScrollView {
-                        LazyVStack(alignment: .leading) {
-                            ForEach(vm.locations) { item in
-                                LocationMemberItemView(
-                                    item: item,
-                                    isLast: item.id == vm.locations.last?.id,
-                                    gender: selectedGender.rawValue
-                                ) {
-                                    await vm.loadMore(gender: selectedGender.rawValue)
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
+                    MemberListView(
+                        items: $vm.locations,
+                        selectedGender: vm.selectedGender.rawValue
+                    ) {
+                        await vm.loadMore(gender: vm.selectedGender.rawValue)
                     }
                     .refreshable {
                         Task {
                             await vm.fetchLocations(gender: selectedGender.rawValue)
                         }
+                    }
+                    .simpleToast(
+                        isPresented: Binding(
+                            get: { vm.errorMessage != nil },
+                            set: { if !$0 { vm.errorMessage = nil } }
+                        ),
+                        options: toastOptions
+                    ) {
+                        Label(vm.errorMessage ?? "", systemImage: "xmark.circle.fill")
+                            .padding()
+                            .background(Color.red.opacity(0.8))
+                            .foregroundColor(Color.white)
+                            .cornerRadius(12)
+                            .padding(.top)
                     }
                 }
                 .navigationTitle("거리")
@@ -90,23 +88,14 @@ struct LocationView: View {
                             .font(.headline)
                             .padding(.horizontal, 30)
                             .padding(.vertical, 10)
-                            .background(Color.accentColor)
                             .foregroundColor(.white)
-                            .clipShape(Capsule())
+                            .glassEffect(.regular.tint(.blue))
                     }
                 }
             }
         }
         .onAppear {
             locationManager.requestPermission()
-        }
-        .alert("오류", isPresented: Binding(
-            get: { vm.errorMessage != nil },
-            set: { if !$0 { vm.errorMessage = nil } }
-        )) {
-            Button("확인", role: .cancel) {}
-        } message: {
-            Text(vm.errorMessage ?? "")
         }
     }
     
