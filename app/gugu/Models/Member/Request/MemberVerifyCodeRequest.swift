@@ -1,4 +1,5 @@
-struct SignupVerifyCodeRequest: Codable {
+struct MemberVerifyCodeRequest: Codable {
+    
     let phone: String
     let code: String
     let password: String

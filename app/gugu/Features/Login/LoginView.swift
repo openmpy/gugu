@@ -62,7 +62,14 @@ struct LoginView: View {
                 
                 Button {
                     Task {
-                        await vm.login(phone: phone, password: password)
+                        do {
+                            let response = try await vm.login(phone: phone, password: password)
+                            
+                            saveToken(accessToken: response.accessToken, refreshToken: response.refreshToken)
+                            auth.isLoggedIn = true
+                        } catch {
+                            print(error)
+                        }
                     }
                 } label: {
                     Text("로그인")
@@ -85,6 +92,11 @@ struct LoginView: View {
         } message: {
             Text(alertMessage)
         }
+    }
+    
+    func saveToken(accessToken: String, refreshToken: String) {
+        KeychainHelper.save(key: "accessToken", value: accessToken)
+        KeychainHelper.save(key: "refreshToken", value: refreshToken)
     }
 }
 

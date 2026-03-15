@@ -6,6 +6,8 @@ struct SignupActivateView: View {
     
     @EnvironmentObject var auth: AuthState
     
+    @StateObject private var vm = SignupViewModel()
+    
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var profileImages: [UIImage] = []
     
@@ -13,10 +15,11 @@ struct SignupActivateView: View {
     @State private var birthYear: String = ""
     @State private var bio: String = ""
     
-    @State private var showAlert = false
-    @State private var alertMessage = ""
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
     
-    @State private var allowReordering = true
+    @State private var allowReordering: Bool = true
+    @State private var goLoginView: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -82,7 +85,15 @@ struct SignupActivateView: View {
             }
             .safeAreaInset(edge: .bottom) {
                 Button {
-                    activate()
+                    Task {
+                        do {
+                            try await vm.activate(nickname: nickname, birthYear: birthYear, bio: bio)
+                            
+                            auth.isLoggedIn = true
+                        } catch {
+                            print(error)
+                        }
+                    }
                 } label: {
                     Text("회원가입")
                         .frame(maxWidth: .infinity)
@@ -211,23 +222,6 @@ struct SignupActivateView: View {
                 }
             }
             pickerItems.wrappedValue.removeAll()
-        }
-    }
-    
-    func activate() {
-        SignupService.shared.activate(nickname: nickname, birthYear: Int(birthYear) ?? 2000, bio: bio) { result in
-            switch result {
-            case .success:
-                DispatchQueue.main.async {
-                    auth.isLoggedIn = true
-                }
-                
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    showAlert = true
-                    alertMessage = error.localizedDescription
-                }
-            }
         }
     }
 }

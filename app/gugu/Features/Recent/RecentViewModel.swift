@@ -32,7 +32,6 @@ final class RecentViewModel: ObservableObject {
             comments = response.payload
             cursorId = response.nextId
             hasNext = response.hasNext
-            
         } catch {
             print(error)
         }

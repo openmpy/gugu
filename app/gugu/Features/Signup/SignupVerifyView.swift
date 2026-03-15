@@ -3,7 +3,8 @@ import Combine
 
 struct SignupVerifyView: View {
     
-    enum Gender: String, CaseIterable, Identifiable {
+    private enum Gender: String, CaseIterable, Identifiable {
+        
         case male = "MALE"
         case female = "FEMALE"
         
@@ -17,6 +18,8 @@ struct SignupVerifyView: View {
         }
     }
     
+    @StateObject private var vm = SignupViewModel()
+    
     @State private var phone: String = ""
     @State private var password: String = ""
     @State private var selectedGender: Gender = .male
@@ -25,12 +28,11 @@ struct SignupVerifyView: View {
     @State private var isSendVerifyCode: Bool = false
     @State private var verifySecond: Int = 180
     
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var showNextView = false
     
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private var isSubmit: Bool {
         isSendVerifyCode && !code.isEmpty && !password.isEmpty && !selectedGender.rawValue.isEmpty
     }
@@ -55,7 +57,15 @@ struct SignupVerifyView: View {
                                 .submitLabel(.done)
                             
                             Button {
-                                sendCode()
+                                Task {
+                                    do {
+                                        try await vm.sendCode(phone: phone)
+                                        
+                                        isSendVerifyCode = true
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
                             } label: {
                                 Text(!isSendVerifyCode ? "전송" : "\(verifySecond)")
                                     .font(.headline)
@@ -134,7 +144,21 @@ struct SignupVerifyView: View {
             }
             .safeAreaInset(edge: .bottom) {
                 Button {
-                    verifyCode()
+                    Task {
+                        do {
+                            let response = try await vm.verifyCode(
+                                phone: phone,
+                                code: code,
+                                password: password,
+                                gender: selectedGender.rawValue
+                            )
+                            
+                            showNextView = true
+                            saveToken(accessToken: response.accessToken, refreshToken: response.refreshToken)
+                        } catch {
+                            print(error)
+                        }
+                    }
                 } label: {
                     Text("회원가입")
                         .font(.headline)
@@ -174,50 +198,6 @@ struct SignupVerifyView: View {
         }
         .fullScreenCover(isPresented: $showNextView) {
             SignupActivateView()
-        }
-    }
-    
-    func sendCode() {
-        SignupService.shared.sendCode(phone: phone) { result in
-            switch result {
-            case .success:
-                DispatchQueue.main.async {
-                    isSendVerifyCode = true
-                    verifySecond = 180
-                    
-                    showAlert = true
-                    alertMessage = "인증 번호가 전송되었습니다."
-                }
-                
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    showAlert = true
-                    alertMessage = error.localizedDescription
-                }
-            }
-        }
-    }
-    
-    func verifyCode() {
-        SignupService.shared.verifyCode(
-            phone: phone,
-            code: code,
-            password: password,
-            gender: selectedGender.rawValue,
-        ) { result in
-            switch result {
-            case .success(let data):
-                DispatchQueue.main.async {
-                    showNextView = true
-                    saveToken(accessToken: data.accessToken, refreshToken: data.refreshToken)
-                }
-                
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    showAlert = true
-                    alertMessage = error.localizedDescription
-                }
-            }
         }
     }
     

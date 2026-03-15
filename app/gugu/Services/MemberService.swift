@@ -10,7 +10,7 @@ final class MemberService {
     func login(
         phone: String,
         password: String
-    ) async throws -> CursorResponse<MemberLoginResponse> {
+    ) async throws -> MemberLoginResponse {
         let url = "http://192.168.0.14:8080/api/v1/members/login"
         let params = MemberLoginRequest(phone: phone, password: password)
         
@@ -20,7 +20,63 @@ final class MemberService {
             parameters: params,
             encoder: JSONParameterEncoder.default
         )
-        .serializingDecodable(CursorResponse<MemberLoginResponse>.self)
+        .serializingDecodable(MemberLoginResponse.self)
+        .value
+    }
+    
+    // MARK: 회원가입
+    func sendCode(
+        phone: String,
+    ) async throws {
+        let url = "http://192.168.0.14:8080/api/v1/members/phone/send-code"
+        let params = MemberSendCodeRequest(phone: phone)
+        
+        _ = try await AF.request(
+            url,
+            method: .post,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
+        )
+        .validate()
+        .serializingData()
+        .value
+    }
+    
+    func verifyCode(
+        phone: String,
+        code: String,
+        password: String,
+        gender: String,
+    ) async throws -> MemberVerifyCodeResponse {
+        let url = "http://192.168.0.14:8080/api/v1/members/phone/verify-code"
+        let params = MemberVerifyCodeRequest(phone: phone, code: code, password: password, gender: gender)
+        
+        return try await AF.request(
+            url,
+            method: .post,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
+        )
+        .serializingDecodable(MemberVerifyCodeResponse.self)
+        .value
+    }
+    
+    func activate(
+        nickname: String,
+        birthYear: Int,
+        bio: String,
+    ) async throws {
+        let url = "http://192.168.0.14:8080/api/v1/members/activate"
+        let params = MemberActivateRequest(nickname: nickname, birthYear: birthYear, bio: bio)
+        
+        _ = try await session.request(
+            url,
+            method: .put,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
+        )
+        .validate()
+        .serializingData()
         .value
     }
     

@@ -1,4 +1,5 @@
-struct SignupVerifyCodeResponse: Codable {
+struct MemberVerifyCodeResponse: Codable {
+    
     let accessToken: String
     let refreshToken: String
 }

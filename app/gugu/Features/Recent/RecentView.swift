@@ -107,20 +107,10 @@ struct RecentView: View {
             }
         }
         .onChange(of: locationManager.currentLocation) { _, newLocation in
-            guard let loc = newLocation else {
-                Task {
-                    await lvm.updateLocation(
-                        latitude: nil,
-                        longitude: nil
-                    )
-                }
-                return
-            }
-            
             Task {
                 await lvm.updateLocation(
-                    latitude: loc.coordinate.latitude,
-                    longitude: loc.coordinate.longitude
+                    latitude: newLocation?.coordinate.latitude,
+                    longitude: newLocation?.coordinate.longitude
                 )
             }
         }
