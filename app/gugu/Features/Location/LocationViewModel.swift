@@ -2,9 +2,9 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class RecentViewModel: ObservableObject {
+final class LocationViewModel: ObservableObject {
     
-    @Published var comments: [MemberGetCommentResponse] = []
+    @Published var locations: [MemberGetLocationResponse] = []
     
     @Published var isLoading: Bool = false
     @Published var hasNext: Bool = true
@@ -13,7 +13,7 @@ final class RecentViewModel: ObservableObject {
     
     private var cursorId: Int64? = nil
     
-    func fetchComments(gender: String) async {
+    func fetchLocations(gender: String) async {
         hasNext = true
         
         guard !isLoading, hasNext else {
@@ -24,12 +24,12 @@ final class RecentViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            let response = try await service.getComments(
+            let response = try await service.getLocations(
                 gender: gender,
                 cursorId: nil
             )
             
-            comments = response.payload
+            locations = response.payload
             cursorId = response.nextId
             hasNext = response.hasNext
             
@@ -47,12 +47,12 @@ final class RecentViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            let response = try await service.getComments(
+            let response = try await service.getLocations(
                 gender: gender,
                 cursorId: cursorId
             )
             
-            comments.append(contentsOf: response.payload)
+            locations.append(contentsOf: response.payload)
             cursorId = response.nextId
             hasNext = response.hasNext
         } catch {
@@ -60,31 +60,11 @@ final class RecentViewModel: ObservableObject {
         }
     }
     
-    func writeComment(comment: String) async {
+    func updateLocation(latitude: Double?, longitude: Double?) async {
         do {
-            try await service.writeComment(comment: comment)
+            try await service.updateLocation(latitude: latitude, longitude: longitude)
         } catch {
             print(error)
         }
-    }
-    
-    func bumpComment() async {
-        do {
-            try await service.bumpComment()
-        } catch is CancellationError {
-            return
-        } catch {
-            print(error)
-        }
-    }
-    
-    func searchComments(
-        keyword: String,
-        cursorId: Int64?
-    ) async throws -> CursorResponse<MemberSearchCommentResponse> {
-        try await service.searchComments(
-            keyword: keyword,
-            cursorId: cursorId
-        )
     }
 }

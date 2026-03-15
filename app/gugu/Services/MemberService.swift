@@ -6,6 +6,7 @@ final class MemberService {
     
     let session = Session(interceptor: AuthInterceptor())
     
+    // MARK: 코멘트
     func writeComment(
         comment: String
     ) async throws {
@@ -82,6 +83,51 @@ final class MemberService {
             encoding: URLEncoding.queryString
         )
         .serializingDecodable(CursorResponse<MemberSearchCommentResponse>.self)
+        .value
+    }
+    
+    // MARK: 위치
+    func getLocations(
+        gender: String,
+        cursorId: Int64?,
+    ) async throws -> CursorResponse<MemberGetLocationResponse> {
+        let url = "http://192.168.0.14:8080/api/v1/members/locations"
+        
+        var params: Parameters = [
+            "gender": gender,
+            "size": 15
+        ]
+        if let cursorId = cursorId {
+            params["cursorId"] = cursorId
+        }
+        
+        return try await session.request(
+            url,
+            method: .get,
+            parameters: params.compactMapValues { $0 }
+        )
+        .serializingDecodable(CursorResponse<MemberGetLocationResponse>.self)
+        .value
+    }
+    
+    func updateLocation(
+        latitude: Double?,
+        longitude: Double?,
+    ) async throws {
+        let url = "http://192.168.0.14:8080/api/v1/members/location"
+        
+        let params = MemberUpdateLocationRequest(
+            latitude: latitude, longitude: longitude
+        )
+        
+        _ = try await session.request(
+            url,
+            method: .put,
+            parameters: params,
+            encoder: JSONParameterEncoder.default
+        )
+        .validate()
+        .serializingData()
         .value
     }
 }

@@ -2,7 +2,8 @@ import SwiftUI
 import Kingfisher
 
 struct LocationMemberRow: View {
-    let item: LocationGetMemberResponse
+    
+    let item: MemberGetLocationResponse
     
     var body: some View {
         HStack {

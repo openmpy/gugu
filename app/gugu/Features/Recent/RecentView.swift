@@ -8,6 +8,7 @@ struct RecentView: View {
     
     @StateObject private var locationManager = LocationManager()
     @StateObject private var vm = RecentViewModel()
+    @StateObject private var lvm = LocationViewModel()
     
     @State private var showCommentAlert: Bool = false
     @State private var comment: String = ""
@@ -105,16 +106,21 @@ struct RecentView: View {
             }
         }
         .onChange(of: locationManager.currentLocation) { _, newLocation in
-            if let loc = newLocation {
-                LocationService.shared.updateLocation(
+            guard let loc = newLocation else {
+                Task {
+                    await lvm.updateLocation(
+                        latitude: nil,
+                        longitude: nil
+                    )
+                }
+                return
+            }
+            
+            Task {
+                await lvm.updateLocation(
                     latitude: loc.coordinate.latitude,
                     longitude: loc.coordinate.longitude
-                ) { _ in }
-            } else {
-                LocationService.shared.updateLocation(
-                    latitude: nil,
-                    longitude: nil
-                ) { _ in }
+                )
             }
         }
     }

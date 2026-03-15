@@ -1,4 +1,5 @@
-struct LocationGetMemberResponse: Decodable, Identifiable {
+struct MemberGetLocationResponse: Decodable, Identifiable {
+    
     let memberId: Int64
     let nickname: String
     let gender: String
