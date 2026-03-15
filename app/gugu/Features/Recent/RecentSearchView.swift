@@ -24,10 +24,9 @@ struct RecentSearchView: View {
                     placement: .navigationBarDrawer(displayMode: .always),
                     prompt: "닉네임을 입력해주세요"
                 )
-                .onChange(of: searchNickname) { _, newValue in
+                .onSubmit(of: .search) {
                     Task {
-                        try? await Task.sleep(for: .milliseconds(300))
-                        await vm.search(keyword: newValue)
+                        await vm.search(keyword: searchNickname)
                     }
                 }
             }
