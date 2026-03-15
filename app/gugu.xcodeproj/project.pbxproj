@@ -11,6 +11,7 @@
 		9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */; };
 		9D04E0562F63892C00B47B4D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0552F63892C00B47B4D /* Kingfisher */; };
 		9D04E0742F63FF8400B47B4D /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 9D04E0732F63FF8400B47B4D /* Alamofire */; };
+		9D1133372F66FFF2000AB324 /* SimpleToast in Frameworks */ = {isa = PBXBuildFile; productRef = 9D1133362F66FFF2000AB324 /* SimpleToast */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 				9D04E0742F63FF8400B47B4D /* Alamofire in Frameworks */,
 				9D04E0472F62D4B100B47B4D /* Zoomable in Frameworks */,
 				9D04E0532F6324AD00B47B4D /* SwiftUIReorderableForEach in Frameworks */,
+				9D1133372F66FFF2000AB324 /* SimpleToast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +81,7 @@
 				9D04E0522F6324AD00B47B4D /* SwiftUIReorderableForEach */,
 				9D04E0552F63892C00B47B4D /* Kingfisher */,
 				9D04E0732F63FF8400B47B4D /* Alamofire */,
+				9D1133362F66FFF2000AB324 /* SimpleToast */,
 			);
 			productName = gugu;
 			productReference = 9D04DFF72F5FF32E00B47B4D /* gugu.app */;
@@ -113,6 +116,7 @@
 				9D04E0512F6324AD00B47B4D /* XCRemoteSwiftPackageReference "swiftui-reorderable-foreach" */,
 				9D04E0542F63892C00B47B4D /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				9D04E0722F63FF8400B47B4D /* XCRemoteSwiftPackageReference "Alamofire" */,
+				9D1133352F66FFF2000AB324 /* XCRemoteSwiftPackageReference "SimpleToast" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9D04DFF82F5FF32E00B47B4D /* Products */;
@@ -399,6 +403,14 @@
 				minimumVersion = 5.11.1;
 			};
 		};
+		9D1133352F66FFF2000AB324 /* XCRemoteSwiftPackageReference "SimpleToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sanzaru/SimpleToast.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.12.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -421,6 +433,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9D04E0722F63FF8400B47B4D /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		9D1133362F66FFF2000AB324 /* SimpleToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9D1133352F66FFF2000AB324 /* XCRemoteSwiftPackageReference "SimpleToast" */;
+			productName = SimpleToast;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

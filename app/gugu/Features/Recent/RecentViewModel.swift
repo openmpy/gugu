@@ -15,8 +15,8 @@ final class RecentViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var hasNext: Bool = true
     
-    @Published var showAlert: Bool = false
-    @Published var alertMessage: String?
+    @Published var showToast: Bool = false
+    @Published var toastMessage: String?
     
     private var cursorId: Int64? = nil
     
@@ -72,8 +72,8 @@ final class RecentViewModel: ObservableObject {
             
             savedComment = comment
             
-            showAlert = true
-            alertMessage = "코멘트가 작성되었습니다."
+            showToast = true
+            toastMessage = "코멘트가 작성되었습니다."
         } catch {
             errorMessage = error.localizedDescription
         }

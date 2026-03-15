@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreLocation
+import SimpleToast
 
 struct RecentView: View {
     
@@ -15,6 +16,10 @@ struct RecentView: View {
     @State private var alertMessage: String = ""
     
     @State private var goUserSearch: Bool = false
+    
+    private let toastOptions = SimpleToastOptions(
+        hideAfter: 5
+    )
     
     var body: some View {
         NavigationStack {
@@ -54,6 +59,28 @@ struct RecentView: View {
                     Task {
                         _ = await (vm.bumpComment(), vm.fetchComments(gender: selectedGender.rawValue))
                     }
+                }
+                .simpleToast(isPresented: $vm.showToast, options: toastOptions) {
+                    Label(vm.toastMessage ?? "", systemImage: "info.circle.fill")
+                        .padding()
+                        .background(Color.blue.opacity(0.8))
+                        .foregroundColor(Color.white)
+                        .cornerRadius(12)
+                        .padding(.top)
+                }
+                .simpleToast(
+                    isPresented: Binding(
+                        get: { vm.errorMessage != nil },
+                        set: { if !$0 { vm.errorMessage = nil } }
+                    ),
+                    options: toastOptions
+                ) {
+                    Label(vm.errorMessage ?? "", systemImage: "xmark.circle.fill")
+                        .padding()
+                        .background(Color.red.opacity(0.8))
+                        .foregroundColor(Color.white)
+                        .cornerRadius(12)
+                        .padding(.top)
                 }
             }
             .navigationTitle("최근")
@@ -102,19 +129,6 @@ struct RecentView: View {
                 }
             }
             Button("취소", role: .cancel) { }
-        }
-        .alert("알림", isPresented: $vm.showAlert) {
-            Button("닫기", role: .cancel) { }
-        } message: {
-            Text(vm.alertMessage ?? "")
-        }
-        .alert("오류", isPresented: Binding(
-            get: { vm.errorMessage != nil },
-            set: { if !$0 { vm.errorMessage = nil } }
-        )) {
-            Button("확인", role: .cancel) {}
-        } message: {
-            Text(vm.errorMessage ?? "")
         }
     }
 }
