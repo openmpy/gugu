@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct RecentMemberItemView: View {
+struct MemberItemView: View {
     
-    let item: MemberGetCommentResponse
+    let item: MemberDisplayable
     let isLast: Bool
     let gender: String
     let loadMore: () async -> Void
@@ -15,7 +15,7 @@ struct RecentMemberItemView: View {
                 age: item.age,
                 heartCount: item.heartCount,
                 distance: item.distance,
-                content: item.comment,
+                content: item.content,
                 updatedAt: item.updatedAt
             )
         }

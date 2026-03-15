@@ -4,62 +4,34 @@ import SimpleToast
 
 struct RecentView: View {
     
-    @AppStorage("selectedRecentGender") private var selectedGender: Gender = .all
-    
     @StateObject private var locationManager = LocationManager()
     @StateObject private var vm = RecentViewModel()
     
-    @State private var showCommentAlert: Bool = false
-    @State private var comment: String = ""
-    
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
-    
     @State private var goUserSearch: Bool = false
     
-    private let toastOptions = SimpleToastOptions(
-        hideAfter: 5
-    )
+    private let toastOptions = SimpleToastOptions(hideAfter: 5)
     
     var body: some View {
         NavigationStack {
             VStack {
-                Picker("Gender", selection: $selectedGender) {
-                    ForEach(Gender.allCases) { gender in
-                        Text(gender.text)
-                            .tag(gender)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.top)
-                .padding(.bottom, 5)
-                .onChange(of: selectedGender) { _, newGender in
+                GenderPickerView(selectedGender: $vm.selectedGender) { _, newGender in
                     Task {
                         await vm.fetchComments(gender: newGender.rawValue)
                     }
                 }
                 
-                ScrollView {
-                    LazyVStack(alignment: .leading) {
-                        ForEach(vm.comments) { item in
-                            RecentMemberItemView(
-                                item: item,
-                                isLast: item.id == vm.comments.last?.id,
-                                gender: selectedGender.rawValue
-                            ) {
-                                await vm.loadMore(gender: selectedGender.rawValue)
-                            }
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
+                MemberListView(
+                    items: $vm.comments,
+                    selectedGender: vm.selectedGender.rawValue
+                ) {
+                    await vm.loadMore(gender: vm.selectedGender.rawValue)
                 }
                 .refreshable {
                     Task {
-                        _ = await (vm.bumpComment(), vm.fetchComments(gender: selectedGender.rawValue))
+                        _ = await (vm.bumpComment(), vm.fetchComments(gender: vm.selectedGender.rawValue))
                     }
                 }
+                
                 .simpleToast(isPresented: $vm.showToast, options: toastOptions) {
                     Label(vm.toastMessage ?? "", systemImage: "info.circle.fill")
                         .padding()
@@ -99,8 +71,8 @@ struct RecentView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        showCommentAlert = true
-                        comment = vm.savedComment
+                        vm.showCommentAlert = true
+                        vm.comment = vm.savedComment
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }
@@ -109,7 +81,7 @@ struct RecentView: View {
         }
         .task {
             if vm.comments.isEmpty {
-                await vm.fetchComments(gender: selectedGender.rawValue)
+                await vm.fetchComments(gender: vm.selectedGender.rawValue)
             }
         }
         .onChange(of: locationManager.currentLocation) { _, newLocation in
@@ -120,12 +92,12 @@ struct RecentView: View {
                 )
             }
         }
-        .alert("코멘트", isPresented: $showCommentAlert) {
-            TextField("내용을 입력해주세요", text: $comment)
+        .alert("코멘트", isPresented: $vm.showCommentAlert) {
+            TextField("내용을 입력해주세요", text: $vm.comment)
             
             Button("작성") {
                 Task {
-                    await vm.writeComment(comment: comment)
+                    await vm.writeComment(comment: vm.comment)
                 }
             }
             Button("취소", role: .cancel) { }

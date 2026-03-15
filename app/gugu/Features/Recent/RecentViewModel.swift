@@ -6,6 +6,7 @@ final class RecentViewModel: ObservableObject {
     
     private let service = MemberService.shared
     
+    @AppStorage("selectedRecentGender") var selectedGender: Gender = .all
     @AppStorage("recentComment") var savedComment: String = ""
     
     @Published var errorMessage: String?
@@ -17,6 +18,9 @@ final class RecentViewModel: ObservableObject {
     
     @Published var showToast: Bool = false
     @Published var toastMessage: String?
+    
+    @Published var showCommentAlert: Bool = false
+    @Published var comment: String = ""
     
     private var cursorId: Int64? = nil
     
